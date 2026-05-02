@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>대학 · 수빈 대입</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="app">
+
+  <div class="card">
+    <h2>🎓 수시 6장 전략</h2>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px;">
+      <div class="grade-box" style="background:#fce7f3;">
+        <div class="lbl" style="color:#9d174d;">소신·적정</div>
+        <div class="val" style="color:#be185d;" id="cnt-soshin">0</div>
+      </div>
+      <div class="grade-box" style="background:#fef3c7;">
+        <div class="lbl" style="color:#78350f;">적정</div>
+        <div class="val" style="color:#92400e;" id="cnt-jeokjeong">0</div>
+      </div>
+      <div class="grade-box" style="background:#dcfce7;">
+        <div class="lbl" style="color:#14532d;">안전</div>
+        <div class="val" style="color:#166534;" id="cnt-anjun">0</div>
+      </div>
+    </div>
+    <div style="font-size:12px; color:var(--c-text-mute); margin-top:10px;">
+      💡 권장 비율 — 4년제 3개 + 전문대 3개 (자소서 폐지 영향으로 안전판 강화)
+    </div>
+  </div>
+
+  <div id="univ-list"></div>
+
+  <div class="card">
+    <h2>➕ 대학 추가/관리</h2>
+    <div class="todo-add-row">
+      <input id="u-name" placeholder="대학명">
+      <input id="u-major" placeholder="학과명">
+    </div>
+    <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+      <select id="u-tier" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="soshin">소신</option>
+        <option value="jeokjeong" selected>적정</option>
+        <option value="anjun">안전</option>
+      </select>
+      <input id="u-type" class="btn-ghost btn btn-sm" placeholder="전형명" style="background:#fff;">
+      <input id="u-min" class="btn-ghost btn btn-sm" placeholder="수능최저" style="background:#fff;">
+      <button class="btn btn-sm" onclick="addUniv()">추가</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📞 입학처 연락처 (직접 전화 권장)</h2>
+    <div style="font-size:13px; line-height:1.8; color:var(--c-text-soft);">
+      💡 <strong>5월 안에 6개 대학 모두 직접 전화</strong>해서 다음 4가지 확인:<br>
+      ① 수능최저 유무·등급<br>
+      ② 면접 비중과 일정<br>
+      ③ 자소서 유무 (대부분 폐지지만 재확인)<br>
+      ④ 6등급대 학종 합격 사례
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🎯 편입 백업 로드맵</h2>
+    <div style="font-size:13px; line-height:1.7; color:var(--c-text-soft);">
+      <div style="padding:6px 0;">📍 <strong>2027.03</strong> — 수도권 전문대 입학</div>
+      <div style="padding:6px 0;">📍 <strong>전문대 1~2년</strong> — 학점 4.0+ 유지, 포트폴리오 구축, TOEIC 준비</div>
+      <div style="padding:6px 0;">📍 <strong>2028~2029</strong> — 4년제 일반/학사편입 (경기대·국민대·건국대·단국대 미디어계열)</div>
+      <div style="padding:6px 0; color:var(--c-success);">✨ 광고·미디어 분야는 학벌보다 포트폴리오가 취업에서 결정적</div>
+    </div>
+  </div>
+
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+let UNIVS = [];
+
+(async function() {
+  App.renderHeader('지원 대학', '6장 전략 + 편입 백업');
+  App.renderTabbar('univ');
+  UNIVS = await App.load('universities');
+  render();
+})();
+
+function render() {
+  const tiers = ['soshin','jeokjeong','anjun'];
+  const tierLabel = { soshin:'소신', jeokjeong:'적정', anjun:'안전' };
+  const counts = { soshin:0, jeokjeong:0, anjun:0 };
+  (UNIVS || []).forEach(u => { if (counts[u.tier] !== undefined) counts[u.tier]++; });
+  document.getElementById('cnt-soshin').textContent = counts.soshin;
+  document.getElementById('cnt-jeokjeong').textContent = counts.jeokjeong;
+  document.getElementById('cnt-anjun').textContent = counts.anjun;
+
+  const html = (UNIVS || [])
+    .sort((a,b) => tiers.indexOf(a.tier) - tiers.indexOf(b.tier))
+    .map(u => `
+      <div class="univ-card tier-${u.tier}">
+        <div class="univ-head">
+          <div>
+            <div class="univ-name">${u.name}</div>
+            <div class="univ-major">${u.major}</div>
+          </div>
+          <div class="univ-tier">${tierLabel[u.tier] || u.tier}</div>
+        </div>
+        <div class="univ-info">
+          <div><div class="lbl">전형</div><div class="val">${u.admissionType || '-'}</div></div>
+          <div><div class="lbl">수능최저</div><div class="val">${u.minimum || '-'}</div></div>
+          <div><div class="lbl">면접</div><div class="val">${u.interview || '-'}</div></div>
+          <div><div class="lbl">상태</div><div class="val">${u.status || '준비중'}</div></div>
+        </div>
+        ${u.memo ? `<div class="univ-note">${u.memo}</div>` : ''}
+        <div style="display:flex; gap:6px; margin-top:10px; justify-content:flex-end;">
+          <button class="btn btn-ghost btn-sm" onclick="changeStatus('${u.id}')">상태변경</button>
+          <button class="btn btn-ghost btn-sm" onclick="delU('${u.id}')">삭제</button>
+        </div>
+      </div>
+    `).join('');
+  document.getElementById('univ-list').innerHTML = html || '<div class="empty">대학을 추가하세요.</div>';
+}
+
+async function changeStatus(id) {
+  const u = UNIVS.find(x => x.id === id);
+  if (!u) return;
+  const next = prompt('상태 입력 (예: 준비중 / 서류준비 / 원서접수 / 1단계합격 / 면접대기 / 최종합격 / 불합격)', u.status || '준비중');
+  if (!next) return;
+  u.status = next;
+  UNIVS = await App.upsert('universities', u);
+  render();
+}
+
+async function delU(id) {
+  if (!confirm('이 대학을 삭제할까요?')) return;
+  UNIVS = await App.remove('universities', id);
+  render();
+}
+
+async function addUniv() {
+  const name = document.getElementById('u-name').value.trim();
+  if (!name) return;
+  const row = {
+    id: App.newId('u'),
+    name,
+    major: document.getElementById('u-major').value.trim(),
+    tier: document.getElementById('u-tier').value,
+    admissionType: document.getElementById('u-type').value.trim(),
+    minimum: document.getElementById('u-min').value.trim() || '확인필요',
+    interview: '',
+    memo: '',
+    status: '준비중'
+  };
+  UNIVS = await App.upsert('universities', row);
+  document.getElementById('u-name').value = '';
+  document.getElementById('u-major').value = '';
+  document.getElementById('u-type').value = '';
+  document.getElementById('u-min').value = '';
+  render();
+}
+
+window.changeStatus = changeStatus;
+window.delU = delU;
+window.addUniv = addUniv;
+</script>
+</body>
+</html>

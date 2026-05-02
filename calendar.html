@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>일정 · 수빈 대입</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="app">
+
+  <div class="card">
+    <h2>🗓️ 입시 마일스톤 (절대 일정)</h2>
+    <div id="milestone-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="cal-nav">
+      <button id="prev-m">◀</button>
+      <div id="cur-month" style="font-weight:700; font-size:16px;"></div>
+      <button id="next-m">▶</button>
+    </div>
+    <div class="cal-head">
+      <div class="cal-sun">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="cal-sat">토</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title-row">
+      <h2>📌 <span id="sel-date-label">오늘</span> 일정</h2>
+    </div>
+    <div id="day-events"></div>
+    <div class="todo-add-row" style="margin-top:12px;">
+      <input id="ev-title" placeholder="새 일정 제목">
+      <button class="btn" id="ev-add">추가</button>
+    </div>
+    <div style="display:flex; gap:6px; margin-top:8px;">
+      <select id="ev-cat" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="학습">학습</option>
+        <option value="모의고사">모의고사</option>
+        <option value="학원">학원</option>
+        <option value="원서">원서</option>
+        <option value="면접">면접</option>
+        <option value="상담">상담</option>
+        <option value="기타">기타</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📅 5~12월 월별 액션</h2>
+    <div id="month-plan" style="font-size:13px; line-height:1.7;"></div>
+  </div>
+
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+let SCHED = [];
+let CUR = new Date();
+let SEL = new Date();
+SEL.setHours(0,0,0,0);
+
+(async function() {
+  App.renderHeader('일정 · 캘린더', '입시 마일스톤과 주간 학습 계획');
+  App.renderTabbar('cal');
+  SCHED = await App.load('schedule');
+
+  renderMilestones();
+  renderCalendar();
+  renderDayEvents();
+  renderMonthPlan();
+
+  document.getElementById('prev-m').onclick = () => { CUR.setMonth(CUR.getMonth() - 1); renderCalendar(); };
+  document.getElementById('next-m').onclick = () => { CUR.setMonth(CUR.getMonth() + 1); renderCalendar(); };
+  document.getElementById('ev-add').onclick = addEvent;
+  document.getElementById('ev-title').addEventListener('keydown', e => { if (e.key === 'Enter') addEvent(); });
+})();
+
+function fmt(d) {
+  return d.toISOString().slice(0,10);
+}
+
+function renderMilestones() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const items = (SCHED || [])
+    .filter(s => s.category === '내신' || s.category === '원서' || s.category === '수능' || s.category === '발표' || s.category === '생기부')
+    .sort((a,b) => new Date(a.date) - new Date(b.date));
+  document.getElementById('milestone-list').innerHTML = items.map(s => {
+    const n = App.daysTo(s.date);
+    const tag = n > 0 ? `D-${n}` : n === 0 ? 'D-DAY' : `D+${-n}`;
+    const tagCls = n < 0 ? 'tag-cat' : n <= 7 ? 'tag-urgent' : n <= 30 ? 'tag-soon' : 'tag-normal';
+    return `<div class="todo-item">
+      <div class="todo-content">
+        <div class="todo-title">${s.title}</div>
+        <div class="todo-meta">
+          <span class="tag tag-cat">${s.category}</span>
+          <span class="tag ${tagCls}">${tag}</span>
+          <span style="color:var(--c-text-mute);">${s.date}</span>
+        </div>
+        ${s.note ? `<div style="font-size:12px; color:var(--c-text-soft); margin-top:3px;">${s.note}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCalendar() {
+  const y = CUR.getFullYear(), m = CUR.getMonth();
+  document.getElementById('cur-month').textContent = `${y}년 ${m+1}월`;
+  const first = new Date(y, m, 1);
+  const last = new Date(y, m + 1, 0);
+  const startDow = first.getDay();
+  const totalDays = last.getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const eventDays = new Set(
+    (SCHED || []).filter(s => {
+      const d = new Date(s.date);
+      return d.getFullYear() === y && d.getMonth() === m;
+    }).map(s => new Date(s.date).getDate())
+  );
+
+  let html = '';
+  for (let i = 0; i < startDow; i++) html += '<div class="cal-cell empty"></div>';
+  for (let d = 1; d <= totalDays; d++) {
+    const cur = new Date(y, m, d);
+    const isToday = cur.getTime() === today.getTime();
+    const isSel = cur.getTime() === SEL.getTime();
+    const cls = ['cal-cell'];
+    if (isToday) cls.push('today');
+    if (isSel && !isToday) cls.push('today');
+    html += `<div class="${cls.join(' ')}" onclick="selectDate(${y},${m},${d})">${d}${eventDays.has(d) ? '<div class="dot"></div>' : ''}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function selectDate(y, m, d) {
+  SEL = new Date(y, m, d);
+  SEL.setHours(0,0,0,0);
+  renderCalendar();
+  renderDayEvents();
+}
+
+function renderDayEvents() {
+  const dateStr = fmt(SEL);
+  document.getElementById('sel-date-label').textContent = `${SEL.getFullYear()}-${String(SEL.getMonth()+1).padStart(2,'0')}-${String(SEL.getDate()).padStart(2,'0')}`;
+  const ev = (SCHED || []).filter(s => s.date === dateStr);
+  const el = document.getElementById('day-events');
+  if (!ev.length) {
+    el.innerHTML = '<div class="empty" style="padding:16px;">이 날 일정이 없습니다.</div>';
+    return;
+  }
+  el.innerHTML = ev.map(s => `<div class="todo-item">
+    <div class="todo-content">
+      <div class="todo-title">${s.title}</div>
+      <div class="todo-meta">
+        <span class="tag tag-cat">${s.category || ''}</span>
+        ${s.note ? `<span style="color:var(--c-text-mute);">${s.note}</span>` : ''}
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="delEv('${s.id}')" style="font-size:11px;">삭제</button>
+  </div>`).join('');
+}
+
+async function addEvent() {
+  const title = document.getElementById('ev-title').value.trim();
+  if (!title) return;
+  const row = {
+    id: App.newId('s'),
+    date: fmt(SEL),
+    title,
+    category: document.getElementById('ev-cat').value,
+    note: ''
+  };
+  SCHED = await App.upsert('schedule', row);
+  document.getElementById('ev-title').value = '';
+  renderCalendar();
+  renderDayEvents();
+}
+
+async function delEv(id) {
+  if (!confirm('이 일정을 삭제할까요?')) return;
+  SCHED = await App.remove('schedule', id);
+  renderCalendar();
+  renderDayEvents();
+}
+
+function renderMonthPlan() {
+  const plan = [
+    { m: '5월', d: 'D-130', items: ['담임 1:1 상담 신청', '6개 대학 요강 다운', '진학사 결제', '교내대회 1개 신청', '외부봉사 1곳 컨택', '국어 매체 인강 시작'] },
+    { m: '6월', d: 'D-100', items: ['3학년 1학기 기말고사 (마지막 내신!)', '면접 기출 자료 수집 시작'] },
+    { m: '7월', d: 'D-70', items: ['면접 예상질문 100개 답변 작성', '모의면접 학원 섭외', '외부봉사 5h 채우기'] },
+    { m: '8월', d: 'D-30', items: ['모의면접 주 2회', '6개 대학 학과 커리큘럼 암기', '생기부 마감 (8.31)', '원서 서류 체크리스트'] },
+    { m: '9월', d: 'D-DAY', items: ['수시 원서 6장 접수 (9.9~13)', '한 곳에 몰빵 X, 분산 접수'] },
+    { m: '10~11월', d: '', items: ['학종 면접 일정 분산 → 즉시 복기', '11.19 수능 응시 (수능최저 대비)'] },
+    { m: '12월', d: '', items: ['합격 발표 → 등록 결정'] }
+  ];
+  document.getElementById('month-plan').innerHTML = plan.map(p => `
+    <div style="padding:10px 0; border-bottom:1px solid var(--c-border);">
+      <strong style="color:var(--c-primary);">${p.m}</strong>
+      ${p.d ? `<span style="font-size:11px; color:var(--c-text-mute); margin-left:6px;">${p.d}</span>` : ''}
+      <ul style="margin:6px 0 0 16px; padding:0; color:var(--c-text-soft);">
+        ${p.items.map(i => `<li>${i}</li>`).join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
+window.selectDate = selectDate;
+window.delEv = delEv;
+</script>
+</body>
+</html>

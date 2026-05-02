@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>면접 · 수빈 대입</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="app">
+
+  <div class="motivate">
+    💬 자소서가 폐지된 지금, <strong>면접이 곧 자소서</strong>입니다. 100문 100답으로 준비하세요.
+  </div>
+
+  <div class="card">
+    <h2>🔍 검색·필터</h2>
+    <input id="search" placeholder="질문/답변 키워드 검색"
+      style="width:100%; padding:10px 12px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:8px;">
+    <div id="tag-filters" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title-row">
+      <h2 id="qa-title">예상 질문</h2>
+      <span id="qa-count" class="sync-status"></span>
+    </div>
+    <div id="qa-list"></div>
+  </div>
+
+  <div class="card">
+    <h2>➕ 새 질문·답변 추가</h2>
+    <input id="new-q" placeholder="질문" style="width:100%; padding:10px 12px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:6px;">
+    <textarea id="new-a" placeholder="답변 (모범 답안 작성)" rows="4" style="width:100%; padding:10px 12px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:6px;"></textarea>
+    <div style="display:flex; gap:6px;">
+      <input id="new-tag" placeholder="태그 (예: 진로, 내신약점, 동아리)" class="btn-ghost btn btn-sm" style="background:#fff; flex:1;">
+      <button class="btn" onclick="addQA()">추가</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🎤 모의면접 체크리스트</h2>
+    <div style="font-size:13px; line-height:1.9; color:var(--c-text-soft);">
+      ☐ 답변은 1분 이내 (너무 길면 감점)<br>
+      ☐ 첫 문장에 결론부터 (두괄식)<br>
+      ☐ 생기부 활동 1가지 이상 인용<br>
+      ☐ "그래서 이 학과에서 ~하고 싶다"로 마무리<br>
+      ☐ 시선은 면접관 미간 (자연스러운 응시)<br>
+      ☐ 손은 무릎 위, 어깨 펴고 등 곧게<br>
+      ☐ "음...", "그런데..." 같은 군더더기 X<br>
+      ☐ 모르는 질문엔 "잠시 생각할 시간을 주시겠습니까" → 5초 후 답변
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📚 추천 준비 방법</h2>
+    <div style="font-size:13px; line-height:1.7; color:var(--c-text-soft);">
+      <div style="padding:6px 0;"><strong>1. 거울 앞 셀프 모의면접</strong> — 매일 5분, 영상 촬영해서 자세·표정 점검</div>
+      <div style="padding:6px 0;"><strong>2. 가족 모의면접</strong> — 주 1회, 부모님이 까다로운 질문 던지기</div>
+      <div style="padding:6px 0;"><strong>3. 학교 진학부 모의면접</strong> — 8월부터 신청, 무료</div>
+      <div style="padding:6px 0;"><strong>4. 사설 모의면접</strong> — 9~10월 3~5회, 회당 5~10만원</div>
+      <div style="padding:6px 0;"><strong>5. 대학별 면접 기출</strong> — 각 대학 입학처 + 진학사 자료실</div>
+    </div>
+  </div>
+
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+let QAS = [];
+let SEARCH = '';
+let TAG = '';
+
+(async function() {
+  App.renderHeader('면접 100문 100답', '자소서 폐지 시대의 핵심 무기');
+  App.renderTabbar('qa');
+  QAS = await App.load('interview');
+  renderTags();
+  render();
+
+  document.getElementById('search').addEventListener('input', e => {
+    SEARCH = e.target.value.trim().toLowerCase();
+    render();
+  });
+})();
+
+function renderTags() {
+  const tags = [...new Set((QAS || []).map(q => q.tag).filter(Boolean))];
+  document.getElementById('tag-filters').innerHTML =
+    `<button class="btn btn-sm ${!TAG ? '' : 'btn-ghost'}" onclick="filterTag('')">전체</button>` +
+    tags.map(t => `<button class="btn btn-sm ${TAG === t ? '' : 'btn-ghost'}" onclick="filterTag('${t}')">${t}</button>`).join('');
+}
+
+function filterTag(t) { TAG = t; renderTags(); render(); }
+
+function render() {
+  let list = QAS || [];
+  if (TAG) list = list.filter(q => q.tag === TAG);
+  if (SEARCH) list = list.filter(q =>
+    (q.q || '').toLowerCase().includes(SEARCH) || (q.a || '').toLowerCase().includes(SEARCH)
+  );
+  document.getElementById('qa-count').textContent = `${list.length}개`;
+  if (!list.length) {
+    document.getElementById('qa-list').innerHTML = '<div class="empty">결과 없음</div>';
+    return;
+  }
+  document.getElementById('qa-list').innerHTML = list.map(q => `
+    <div class="qa-item">
+      <div class="qa-q">${q.q}</div>
+      <div class="qa-a">${(q.a || '').replace(/\n/g, '<br>')}</div>
+      ${q.tag ? `<span class="qa-tag">#${q.tag}</span>` : ''}
+      <div style="display:flex; gap:6px; margin-top:8px; justify-content:flex-end;">
+        <button class="btn btn-ghost btn-sm" onclick="editQA('${q.id}')">수정</button>
+        <button class="btn btn-ghost btn-sm" onclick="delQA('${q.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function addQA() {
+  const q = document.getElementById('new-q').value.trim();
+  const a = document.getElementById('new-a').value.trim();
+  if (!q) return;
+  const row = {
+    id: App.newId('q'),
+    q, a,
+    tag: document.getElementById('new-tag').value.trim()
+  };
+  QAS = await App.upsert('interview', row);
+  document.getElementById('new-q').value = '';
+  document.getElementById('new-a').value = '';
+  document.getElementById('new-tag').value = '';
+  renderTags(); render();
+}
+
+async function editQA(id) {
+  const qa = QAS.find(x => x.id === id);
+  if (!qa) return;
+  const newA = prompt('답변 수정', qa.a || '');
+  if (newA === null) return;
+  qa.a = newA;
+  QAS = await App.upsert('interview', qa);
+  render();
+}
+
+async function delQA(id) {
+  if (!confirm('이 질문을 삭제할까요?')) return;
+  QAS = await App.remove('interview', id);
+  renderTags(); render();
+}
+
+window.filterTag = filterTag;
+window.editQA = editQA;
+window.delQA = delQA;
+window.addQA = addQA;
+</script>
+</body>
+</html>

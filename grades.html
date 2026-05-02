@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>성적 · 수빈 대입</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<main class="app">
+
+  <div class="card">
+    <h2>📊 누적 평균</h2>
+    <div class="grade-grid">
+      <div class="grade-box">
+        <div class="lbl">전체 평균등급</div>
+        <div class="val" id="avg-all">-</div>
+      </div>
+      <div class="grade-box">
+        <div class="lbl">국·수·영</div>
+        <div class="val" id="avg-major">-</div>
+      </div>
+      <div class="grade-box">
+        <div class="lbl">국어·사회</div>
+        <div class="val" id="avg-hum">-</div>
+      </div>
+      <div class="grade-box">
+        <div class="lbl">진로선택 (1·2학년)</div>
+        <div class="val" style="color:var(--c-success);">All A</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📈 학기별 평균등급 추이</h2>
+    <div class="chart-wrap">
+      <canvas id="chart-trend"></canvas>
+    </div>
+    <div style="font-size:12px; color:var(--c-text-mute); margin-top:8px;">
+      ⚠️ 추세가 평탄형. 3학년 1학기 기말에서 평균 상승 시 학종 어필 가능.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📚 과목별 등급 추이</h2>
+    <div class="chart-wrap">
+      <canvas id="chart-subj"></canvas>
+    </div>
+    <div style="font-size:12px; color:var(--c-text-mute); margin-top:8px;">
+      ⚠️ 영어 2-1학기 7등급, 일본어 2-1학기 8등급 — 수능최저 영어 4 충족 불투명.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📝 학기별 상세</h2>
+    <div style="display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;" id="sem-tabs"></div>
+    <div id="grade-table-wrap"></div>
+  </div>
+
+  <div class="card">
+    <h2>🎯 모의고사 기록</h2>
+    <p style="font-size:13px; color:var(--c-text-soft);">
+      (수능최저 충족 확인용. 매월 모의고사 후 추가하세요.)
+    </p>
+    <div id="moui-empty" class="empty">
+      모의고사 기록을 시트에 추가하면 자동 표시됩니다.
+    </div>
+  </div>
+
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+let GRADES = [];
+let SEM_TAB = '1-1';
+
+(async function() {
+  App.renderHeader('성적 관리', '내신 추이와 위험 신호를 한눈에');
+  App.renderTabbar('grade');
+  GRADES = await App.load('grades');
+  renderSummary();
+  renderTrendChart();
+  renderSubjChart();
+  renderSemTabs();
+  renderTable();
+})();
+
+function semKey(g) { return `${g.year}-${g.sem}`; }
+
+function avgFiltered(filterFn) {
+  const pool = (GRADES || []).filter(g => g.grade && Number(g.grade) >= 1 && Number(g.grade) <= 9);
+  const arr = filterFn ? pool.filter(filterFn) : pool;
+  if (!arr.length) return 0;
+  const s = arr.reduce((a,g) => a + Number(g.grade), 0);
+  return s / arr.length;
+}
+
+function renderSummary() {
+  document.getElementById('avg-all').textContent = avgFiltered().toFixed(2);
+  document.getElementById('avg-major').textContent = avgFiltered(g =>
+    /국어|수학|영어|문학|독서/.test(g.subject)
+  ).toFixed(2);
+  document.getElementById('avg-hum').textContent = avgFiltered(g =>
+    /국어|문학|독서|사회|역사|지리|윤리|한국사/.test(g.subject)
+  ).toFixed(2);
+}
+
+function renderTrendChart() {
+  const sems = ['1-1','1-2','2-1','2-2'];
+  const data = sems.map(s => {
+    const arr = GRADES.filter(g => semKey(g) === s && g.grade);
+    if (!arr.length) return null;
+    return arr.reduce((a,g) => a + Number(g.grade), 0) / arr.length;
+  });
+  new Chart(document.getElementById('chart-trend'), {
+    type: 'line',
+    data: {
+      labels: sems.map(s => s + '학기'),
+      datasets: [{
+        label: '평균등급 (낮을수록 좋음)',
+        data,
+        borderColor: '#4f46e5',
+        backgroundColor: 'rgba(79,70,229,0.15)',
+        tension: 0.3,
+        fill: true,
+        pointRadius: 5,
+        pointBackgroundColor: '#4f46e5'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { reverse: true, min: 1, max: 9, ticks: { stepSize: 1 } } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function renderSubjChart() {
+  const subjects = ['국어','수학','영어'];
+  const sems = ['1-1','1-2','2-1','2-2'];
+  const datasets = subjects.map((subj, i) => ({
+    label: subj,
+    data: sems.map(s => {
+      const g = GRADES.find(x => semKey(x) === s && (
+        x.subject === subj ||
+        (subj === '국어' && /문학|독서/.test(x.subject)) ||
+        (subj === '수학' && /수학/.test(x.subject)) ||
+        (subj === '영어' && /영어/.test(x.subject))
+      ));
+      return g ? Number(g.grade) : null;
+    }),
+    borderColor: ['#ec4899','#3b82f6','#16a34a'][i],
+    backgroundColor: ['#ec4899','#3b82f6','#16a34a'][i] + '22',
+    tension: 0.3
+  }));
+  new Chart(document.getElementById('chart-subj'), {
+    type: 'line',
+    data: { labels: sems.map(s => s + '학기'), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { reverse: true, min: 1, max: 9, ticks: { stepSize: 1 } } }
+    }
+  });
+}
+
+function renderSemTabs() {
+  const sems = [...new Set(GRADES.map(semKey))].sort();
+  const wrap = document.getElementById('sem-tabs');
+  wrap.innerHTML = sems.map(s =>
+    `<button class="btn ${s === SEM_TAB ? '' : 'btn-ghost'} btn-sm" onclick="switchSem('${s}')">${s}학기</button>`
+  ).join('');
+}
+function switchSem(s) { SEM_TAB = s; renderSemTabs(); renderTable(); }
+
+function renderTable() {
+  const arr = GRADES.filter(g => semKey(g) === SEM_TAB);
+  if (!arr.length) {
+    document.getElementById('grade-table-wrap').innerHTML = '<div class="empty">데이터 없음</div>';
+    return;
+  }
+  const html = `
+    <table class="grade-table">
+      <thead><tr>
+        <th>과목</th><th>점수/평균</th><th>등급</th><th>비고</th>
+      </tr></thead>
+      <tbody>
+        ${arr.map(g => `<tr>
+          <td class="subj">${g.subject}</td>
+          <td>${g.score}/${g.avg}</td>
+          <td class="${App.gradeClass(g.grade)}">${g.grade}</td>
+          <td style="color:var(--c-text-mute); font-size:12px;">${g.note || ''}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  document.getElementById('grade-table-wrap').innerHTML = html;
+}
+
+window.switchSem = switchSem;
+</script>
+</body>
+</html>

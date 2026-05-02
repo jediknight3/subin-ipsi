@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>투두 · 수빈 대입</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="app">
+
+  <div class="tab-toggle">
+    <button id="t-all" class="active">전체</button>
+    <button id="t-parent">👨 부모</button>
+    <button id="t-subin">👧 수빈</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title-row">
+      <h2 id="list-title">전체 할 일</h2>
+      <span id="count" class="sync-status"></span>
+    </div>
+
+    <div class="todo-add-row">
+      <input id="new-title" placeholder="새 할 일 입력 후 Enter">
+      <button class="btn" id="add-btn">추가</button>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+      <select id="new-who" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="수빈">👧 수빈</option>
+        <option value="부모">👨 부모</option>
+      </select>
+      <select id="new-cat" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="내신">내신</option>
+        <option value="비교과">비교과</option>
+        <option value="면접">면접</option>
+        <option value="정보수집">정보수집</option>
+        <option value="학교소통">학교소통</option>
+        <option value="멘탈">멘탈</option>
+        <option value="케어">케어</option>
+        <option value="기타">기타</option>
+      </select>
+      <input type="date" id="new-due" class="btn-ghost btn btn-sm" style="background:#fff; padding:6px 10px;">
+      <select id="new-pri" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="high">긴급</option>
+        <option value="mid" selected>보통</option>
+        <option value="low">낮음</option>
+      </select>
+    </div>
+
+    <div id="todo-list" style="margin-top:12px;"></div>
+  </div>
+
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+let CURRENT_FILTER = 'all';
+let TODOS = [];
+
+(async function() {
+  App.renderHeader('할 일 관리', '부모와 수빈이가 함께 체크합니다');
+  App.renderTabbar('todo');
+  TODOS = await App.load('todos');
+  render();
+
+  document.getElementById('t-all').onclick = () => switchTab('all');
+  document.getElementById('t-parent').onclick = () => switchTab('부모');
+  document.getElementById('t-subin').onclick = () => switchTab('수빈');
+
+  document.getElementById('add-btn').onclick = addTodo;
+  document.getElementById('new-title').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addTodo();
+  });
+})();
+
+function switchTab(filter) {
+  CURRENT_FILTER = filter;
+  ['t-all','t-parent','t-subin'].forEach(id => document.getElementById(id).classList.remove('active'));
+  if (filter === 'all') document.getElementById('t-all').classList.add('active');
+  else if (filter === '부모') document.getElementById('t-parent').classList.add('active');
+  else document.getElementById('t-subin').classList.add('active');
+  document.getElementById('list-title').textContent =
+    filter === 'all' ? '전체 할 일' : filter === '부모' ? '👨 부모 할 일' : '👧 수빈 할 일';
+  render();
+}
+
+function isDone(t) { return t.done === true || t.done === 'TRUE' || t.done === 'true'; }
+
+function render() {
+  const list = (TODOS || [])
+    .filter(t => CURRENT_FILTER === 'all' ? true : t.who === CURRENT_FILTER)
+    .sort((a,b) => {
+      if (isDone(a) !== isDone(b)) return isDone(a) ? 1 : -1;
+      const da = a.due ? new Date(a.due) : new Date('2999-01-01');
+      const db = b.due ? new Date(b.due) : new Date('2999-01-01');
+      return da - db;
+    });
+
+  const total = list.length;
+  const done = list.filter(isDone).length;
+  document.getElementById('count').textContent = `${done}/${total} 완료`;
+
+  const el = document.getElementById('todo-list');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty">할 일이 없습니다. 위에서 새로 추가해보세요.</div>';
+    return;
+  }
+  el.innerHTML = list.map(t => {
+    const dleft = t.due ? App.daysTo(t.due) : null;
+    let tagCls = 'tag-normal', tagTxt = '';
+    if (isDone(t)) { tagCls = 'tag-done'; tagTxt = '완료'; }
+    else if (dleft !== null) {
+      tagTxt = dleft === 0 ? '오늘' : dleft < 0 ? `${-dleft}일 지남` : `D-${dleft}`;
+      tagCls = dleft < 0 ? 'tag-urgent' : dleft <= 1 ? 'tag-urgent' : dleft <= 3 ? 'tag-soon' : 'tag-normal';
+    }
+    const priCls = t.priority === 'high' ? 'tag-urgent' : t.priority === 'low' ? 'tag-cat' : 'tag-normal';
+    const priTxt = t.priority === 'high' ? '긴급' : t.priority === 'low' ? '낮음' : '보통';
+    return `<div class="todo-item ${isDone(t) ? 'done' : ''}">
+      <div class="todo-check ${isDone(t) ? 'checked' : ''}" onclick="toggle('${t.id}')">${isDone(t) ? '✓' : ''}</div>
+      <div class="todo-content">
+        <div class="todo-title">${t.title}</div>
+        <div class="todo-meta">
+          <span class="tag tag-cat">${t.who}</span>
+          ${t.category ? `<span class="tag tag-cat">${t.category}</span>` : ''}
+          <span class="tag ${priCls}">${priTxt}</span>
+          ${tagTxt ? `<span class="tag ${tagCls}">${tagTxt}</span>` : ''}
+          ${t.due ? `<span style="color:var(--c-text-mute);">${t.due}</span>` : ''}
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="del('${t.id}')" style="font-size:11px;">삭제</button>
+    </div>`;
+  }).join('');
+}
+
+async function toggle(id) {
+  const t = TODOS.find(x => x.id === id);
+  if (!t) return;
+  t.done = !isDone(t);
+  TODOS = await App.upsert('todos', t);
+  render();
+}
+
+async function del(id) {
+  if (!confirm('이 할 일을 삭제할까요?')) return;
+  TODOS = await App.remove('todos', id);
+  render();
+}
+
+async function addTodo() {
+  const title = document.getElementById('new-title').value.trim();
+  if (!title) return;
+  const row = {
+    id: App.newId('t'),
+    title,
+    who: document.getElementById('new-who').value,
+    category: document.getElementById('new-cat').value,
+    due: document.getElementById('new-due').value,
+    priority: document.getElementById('new-pri').value,
+    done: false,
+    createdAt: new Date().toISOString()
+  };
+  TODOS = await App.upsert('todos', row);
+  document.getElementById('new-title').value = '';
+  render();
+}
+</script>
+</body>
+</html>

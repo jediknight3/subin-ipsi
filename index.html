@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>수빈 대입 준비</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🎓</text></svg>">
+</head>
+<body>
+<main class="app">
+
+  <div class="motivate" id="motivate"></div>
+
+  <div class="card">
+    <h2>📅 D-day</h2>
+    <div class="dday-grid" id="dday-grid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title-row">
+      <h2>✅ 오늘 / 이번주 할 일</h2>
+      <a href="todo.html" class="btn btn-soft btn-sm">전체보기</a>
+    </div>
+    <div id="today-todos"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title-row">
+      <h2>📊 진도율</h2>
+      <a href="grades.html" class="btn btn-soft btn-sm">상세</a>
+    </div>
+    <div id="progress-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title-row">
+      <h2>🎯 핵심 전략 (정밀분석 요약)</h2>
+    </div>
+    <div style="font-size:13px; line-height:1.7; color:var(--c-text-soft);">
+      <div style="padding:8px 0; border-bottom:1px solid var(--c-border);">
+        <strong style="color:var(--c-text);">📌 누적 평균 6.23등급</strong> · 국·수·영 5.92등급
+      </div>
+      <div style="padding:8px 0; border-bottom:1px solid var(--c-border);">
+        <strong style="color:var(--c-danger);">⚠️ 핵심 위험</strong> 수상 0건 · 외부봉사 0건 · 자소서 폐지
+      </div>
+      <div style="padding:8px 0; border-bottom:1px solid var(--c-border);">
+        <strong style="color:var(--c-success);">💪 핵심 무기</strong> 진로 일관성(광고→공연) · 동아리 부기장 리더십 · 문학과매체 96점
+      </div>
+      <div style="padding:8px 0;">
+        <strong style="color:var(--c-primary);">🏆 6장 전략</strong> 4년제 3 (안양·한신·강남) + 전문대 3 (인덕·신구·명지)
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+(async function() {
+  App.renderHeader('수빈이 대입 준비', '남양주다산고 3학년 · 2027학년도 수시');
+  App.renderTabbar('home');
+
+  // 동기부여 메시지
+  const motivates = [
+    '💪 오늘의 한 걸음이 9월의 합격으로 이어집니다.',
+    '🌱 6등급도 진로 스토리가 있으면 충분합니다.',
+    '✨ 엄마·아빠가 함께 가는 길이에요. 혼자가 아닙니다.',
+    '🎯 면접이 곧 자소서. 준비된 만큼 보입니다.',
+    '📚 어제보다 한 줄만 더 — 그게 기적의 시작.'
+  ];
+  document.getElementById('motivate').textContent =
+    motivates[new Date().getDate() % motivates.length];
+
+  // D-day
+  const ddays = [
+    { lbl: '수능', date: CONFIG.EXAM_DATE, cls: 'dday' },
+    { lbl: '수시 원서접수', date: CONFIG.WONSEO_DATE, cls: 'dday alt' },
+    { lbl: '3학년 1학기 기말', date: CONFIG.GIMAL_DATE, cls: 'dday warn' },
+    { lbl: '생기부 마감', date: CONFIG.SAENGGIBU_DEADLINE, cls: 'dday cool' }
+  ];
+  document.getElementById('dday-grid').innerHTML = ddays.map(d => {
+    const n = App.daysTo(d.date);
+    const tag = n > 0 ? `D-${n}` : n === 0 ? 'D-DAY' : `D+${-n}`;
+    return `<div class="${d.cls}">
+      <div class="dday-label">${d.lbl}</div>
+      <div class="dday-num">${tag}</div>
+      <div class="dday-date">${d.date}</div>
+    </div>`;
+  }).join('');
+
+  // 오늘/이번주 할 일
+  const todos = await App.load('todos');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const wk = new Date(today); wk.setDate(today.getDate() + 7);
+  const upcoming = (todos || [])
+    .filter(t => !(t.done === true || t.done === 'TRUE' || t.done === 'true'))
+    .filter(t => {
+      if (!t.due) return false;
+      const d = new Date(t.due);
+      return d >= today && d <= wk;
+    })
+    .sort((a,b) => new Date(a.due) - new Date(b.due))
+    .slice(0, 6);
+  const tEl = document.getElementById('today-todos');
+  if (!upcoming.length) {
+    tEl.innerHTML = '<div class="empty">이번주 마감 할 일이 없어요.<br>새 할 일을 추가해보세요.</div>';
+  } else {
+    tEl.innerHTML = upcoming.map(t => {
+      const dleft = App.daysTo(t.due);
+      const tagCls = dleft <= 1 ? 'tag-urgent' : dleft <= 3 ? 'tag-soon' : 'tag-normal';
+      const tagTxt = dleft === 0 ? '오늘' : dleft < 0 ? `${-dleft}일 지남` : `D-${dleft}`;
+      return `<div class="todo-item">
+        <div class="todo-content">
+          <div class="todo-title">${t.title}</div>
+          <div class="todo-meta">
+            <span class="tag tag-cat">${t.who}</span>
+            <span class="tag tag-cat">${t.category || ''}</span>
+            <span class="tag ${tagCls}">${tagTxt}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // 진도율 (부모 / 수빈 / 카테고리별)
+  const total = todos.length;
+  const done = todos.filter(t => t.done === true || t.done === 'TRUE' || t.done === 'true').length;
+  const byWho = {
+    '부모': todos.filter(t => t.who === '부모'),
+    '수빈': todos.filter(t => t.who === '수빈')
+  };
+  const rows = [
+    ['전체', done, total],
+    ['👨 부모 (최재훈)', byWho['부모'].filter(t => t.done === true || t.done === 'TRUE' || t.done === 'true').length, byWho['부모'].length],
+    ['👧 수빈', byWho['수빈'].filter(t => t.done === true || t.done === 'TRUE' || t.done === 'true').length, byWho['수빈'].length]
+  ];
+  document.getElementById('progress-list').innerHTML = rows.map(([lbl, d, t]) => {
+    const pct = t ? Math.round(d / t * 100) : 0;
+    return `<div style="margin-bottom:12px;">
+      <div class="progress-row"><span>${lbl}</span><span>${d}/${t} (${pct}%)</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+})();
+</script>
+</body>
+</html>
