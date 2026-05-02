@@ -45,6 +45,10 @@
         <option value="jeokjeong" selected>적정</option>
         <option value="anjun">안전</option>
       </select>
+      <select id="u-utype" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="4년제">4년제</option>
+        <option value="전문대">전문대</option>
+      </select>
       <input id="u-type" class="btn-ghost btn btn-sm" placeholder="전형명" style="background:#fff;">
       <input id="u-min" class="btn-ghost btn btn-sm" placeholder="수능최저" style="background:#fff;">
       <button class="btn btn-sm" onclick="addUniv()">추가</button>
@@ -60,6 +64,92 @@
       ③ 자소서 유무 (대부분 폐지지만 재확인)<br>
       ④ 6등급대 학종 합격 사례
     </div>
+  </div>
+
+  <div class="card">
+    <h2>📋 정시 대비 — 수능/실기/면접 비중</h2>
+    <div style="font-size:12px; color:var(--c-text-mute); margin-bottom:8px;">수능: 2026.11.19 · 정시 원서: 2026.12.27~2027.01.06 (예상)</div>
+    <div style="font-size:12px; color:var(--c-text-soft); margin-bottom:10px;">
+      🎯 목표: 국어 4등급·영어 4등급 → 전문대 정시 합격권 / 3등급 → 4년제 도전 가능
+    </div>
+
+    <div style="font-weight:600; font-size:13px; color:var(--c-primary); margin:10px 0 4px;">전문대 정시</div>
+    <table style="width:100%; border-collapse:collapse; font-size:12px;">
+      <tr style="background:var(--c-surface-raised); font-weight:600;">
+        <td style="padding:5px 6px;">대학</td>
+        <td style="padding:5px 6px;">학과</td>
+        <td style="padding:5px 6px;">전형요소</td>
+        <td style="padding:5px 6px;">비중/특이사항</td>
+      </tr>
+      <tr><td style="padding:4px 6px;">동아방송예술대</td><td>엔터테인먼트경영</td><td>수능+내신</td><td style="color:var(--c-success);">실기 없음 ★</td></tr>
+      <tr style="background:var(--c-surface-raised);"><td style="padding:4px 6px;">동서울대</td><td>엔터테인먼트경영</td><td>내신</td><td style="color:var(--c-success);">실기 없음 ★</td></tr>
+      <tr><td style="padding:4px 6px;">국제대</td><td>콘텐츠기획홍보</td><td>내신+수능</td><td>실기 없음</td></tr>
+      <tr style="background:var(--c-surface-raised);"><td style="padding:4px 6px;">국제예술대</td><td>공연기획전공</td><td>면접</td><td>실기 없음, 면접 100%</td></tr>
+      <tr><td style="padding:4px 6px;">백석예술대</td><td>공연예술경영</td><td>실기</td><td style="color:var(--c-danger);">실기 필수 ✗</td></tr>
+    </table>
+
+    <div style="font-weight:600; font-size:13px; color:var(--c-primary); margin:14px 0 4px;">4년제 정시 (실기 없는 전형 우선)</div>
+    <table style="width:100%; border-collapse:collapse; font-size:12px;">
+      <tr style="background:var(--c-surface-raised); font-weight:600;">
+        <td style="padding:5px 6px;">대학</td>
+        <td style="padding:5px 6px;">학과</td>
+        <td style="padding:5px 6px;">전형요소</td>
+        <td style="padding:5px 6px;">비중/특이사항</td>
+      </tr>
+      <tr><td style="padding:4px 6px;">대진대</td><td>연극영화학부</td><td>면접</td><td style="color:var(--c-success);">실기 없음, 면접 위주 ★</td></tr>
+      <tr style="background:var(--c-surface-raised);"><td style="padding:4px 6px;">호원대</td><td>공연미디어 기획·연출</td><td>면접</td><td style="color:var(--c-success);">실기 없음, 면접 위주 ★</td></tr>
+      <tr><td style="padding:4px 6px;">중부대</td><td>엔터테인먼트학전공</td><td>수능</td><td>수능 100%, 실기 없음</td></tr>
+      <tr style="background:var(--c-surface-raised);"><td style="padding:4px 6px;">수원대</td><td>디지털콘텐츠전공</td><td>수능</td><td>수능 100%, 실기 없음</td></tr>
+      <tr><td style="padding:4px 6px;">청운대</td><td>공연기획경영</td><td>수능</td><td>수능 100%, 실기 없음</td></tr>
+      <tr style="background:var(--c-surface-raised);"><td style="padding:4px 6px;">호서대</td><td>문화콘텐츠기획트랙</td><td>수능</td><td>수능 100%, 실기 없음</td></tr>
+      <tr><td style="padding:4px 6px;">동덕여대</td><td>문화예술경영</td><td>수능</td><td>여대, 수능 100%</td></tr>
+      <tr style="background:var(--c-surface-raised);"><td style="padding:4px 6px;">상명대</td><td>문화예술경영</td><td>수능</td><td>수능 100%</td></tr>
+    </table>
+    <div style="margin-top:8px; font-size:12px; color:var(--c-danger);">
+      ⚠️ 수능최저 있는 수시(안양대 등)도 수능 준비 필수 — 정시를 백업이 아닌 병행 전략으로
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📚 후보 대학 전체 목록 (연출·기획·미디어 계열)</h2>
+    <div style="font-size:11px; color:var(--c-text-mute); margin-bottom:8px;">SAN 제공 자료 기준 · 수시/정시 모두 포함 · 수빈이 적합도 기준 필터링</div>
+    <details>
+      <summary style="cursor:pointer; font-size:13px; font-weight:600; color:var(--c-primary); padding:6px 0;">▶ 전문대 6개교 펼치기</summary>
+      <div style="margin-top:8px; font-size:12px; line-height:2;">
+        <table style="width:100%; border-collapse:collapse;">
+          <tr style="background:var(--c-surface-raised); font-weight:600;">
+            <td style="padding:4px 6px;">대학</td><td style="padding:4px 6px;">학과</td><td style="padding:4px 6px;">전형</td><td style="padding:4px 6px;">비고</td>
+          </tr>
+          <tr><td style="padding:3px 6px;">동아방송예술대</td><td>엔터테인먼트경영과</td><td>수시 내신·면접 / 정시</td><td style="color:var(--c-success);">★ 수능최저 없음</td></tr>
+          <tr style="background:var(--c-surface-raised);"><td style="padding:3px 6px;">동서울대</td><td>엔터테인먼트경영과</td><td>수시 내신 / 정시</td><td>서울 근교</td></tr>
+          <tr><td style="padding:3px 6px;">백석예술대</td><td>공연예술경영과</td><td>수시 실기 / 정시</td><td style="color:var(--c-danger);">실기 필요</td></tr>
+          <tr style="background:var(--c-surface-raised);"><td style="padding:3px 6px;">서울예술대</td><td>예술경영 공연콘텐츠기획</td><td>수시</td><td>명문 전문대</td></tr>
+          <tr><td style="padding:3px 6px;">국제대</td><td>콘텐츠기획홍보전공</td><td>수시 내신 / 정시</td><td></td></tr>
+          <tr style="background:var(--c-surface-raised);"><td style="padding:3px 6px;">국제예술대</td><td>공연기획전공</td><td>수시 면접 / 정시</td><td>면접 비중 높음</td></tr>
+        </table>
+      </div>
+    </details>
+    <details style="margin-top:8px;">
+      <summary style="cursor:pointer; font-size:13px; font-weight:600; color:var(--c-primary); padding:6px 0;">▶ 4년제 주요 대학 펼치기 (내신 전형 중심)</summary>
+      <div style="margin-top:8px; font-size:12px; line-height:2;">
+        <table style="width:100%; border-collapse:collapse;">
+          <tr style="background:var(--c-surface-raised); font-weight:600;">
+            <td style="padding:4px 6px;">대학</td><td style="padding:4px 6px;">학과</td><td style="padding:4px 6px;">전형</td><td style="padding:4px 6px;">비고</td>
+          </tr>
+          <tr><td style="padding:3px 6px;">대진대</td><td>연극영화학부 연극전공</td><td>수시 면접 / 정시</td><td style="color:var(--c-success);">면접 전형 有</td></tr>
+          <tr style="background:var(--c-surface-raised);"><td style="padding:3px 6px;">호원대</td><td>공연미디어학부 기획·연출</td><td>수시 면접 / 정시</td><td style="color:var(--c-success);">면접 전형 有</td></tr>
+          <tr><td style="padding:3px 6px;">계명대</td><td>연극뮤지컬과 공연기획</td><td>수시 면접/학종</td><td>대구 (원거리)</td></tr>
+          <tr style="background:var(--c-surface-raised);"><td style="padding:3px 6px;">호서대</td><td>문화영상학부 문화콘텐츠기획</td><td>수시 교과·면접 / 정시</td><td></td></tr>
+          <tr><td style="padding:3px 6px;">중부대</td><td>공연예술체육학부 엔터테인먼트</td><td>수시 교과 / 정시</td><td></td></tr>
+          <tr style="background:var(--c-surface-raised);"><td style="padding:3px 6px;">조선대</td><td>K-컬처공연·기획학과</td><td>수시 학종·교과</td><td>광주 (원거리)</td></tr>
+          <tr><td style="padding:3px 6px;">동덕여대</td><td>문화예술경영전공</td><td>수시 교과·학종·논술 / 정시</td><td>여대</td></tr>
+          <tr style="background:var(--c-surface-raised);"><td style="padding:3px 6px;">상명대</td><td>문화예술경영전공</td><td>수시 교과·학종 / 정시</td><td></td></tr>
+          <tr><td style="padding:3px 6px;">인하대</td><td>문화콘텐츠문화경영학과</td><td>수시 학종·교과·논술 / 정시</td><td>상위권</td></tr>
+          <tr style="background:var(--c-surface-raised);"><td style="padding:3px 6px;">청운대</td><td>공연기획경영학과</td><td>수시 실기 / 정시 수능</td><td></td></tr>
+        </table>
+        <div style="margin-top:6px; color:var(--c-text-mute);">※ 경희대·동국대·성균관대·한양대 등은 실기 또는 최상위 학종 — 현재 등급에서 도전 어려움</div>
+      </div>
+    </details>
   </div>
 
   <div class="card">
@@ -101,7 +191,7 @@ function render() {
       <div class="univ-card tier-${u.tier}">
         <div class="univ-head">
           <div>
-            <div class="univ-name">${u.name}</div>
+            <div class="univ-name">${u.name}${u.utype ? ` <span style="font-size:11px; font-weight:500; padding:2px 6px; border-radius:10px; background:${u.utype==='전문대'?'#dbeafe':'#ede9fe'}; color:${u.utype==='전문대'?'#1d4ed8':'#6d28d9'};">${u.utype}</span>` : ''}</div>
             <div class="univ-major">${u.major}</div>
           </div>
           <div class="univ-tier">${tierLabel[u.tier] || u.tier}</div>
@@ -150,7 +240,8 @@ async function addUniv() {
     minimum: document.getElementById('u-min').value.trim() || '확인필요',
     interview: '',
     memo: '',
-    status: '준비중'
+    status: '준비중',
+    utype: document.getElementById('u-utype').value
   };
   UNIVS = await App.upsert('universities', row);
   document.getElementById('u-name').value = '';
