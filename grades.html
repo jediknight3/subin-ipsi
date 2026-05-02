@@ -60,12 +60,58 @@
   </div>
 
   <div class="card">
-    <h2>🎯 모의고사 기록</h2>
-    <p style="font-size:13px; color:var(--c-text-soft);">
-      (수능최저 충족 확인용. 매월 모의고사 후 추가하세요.)
-    </p>
-    <div id="moui-empty" class="empty">
-      모의고사 기록을 시트에 추가하면 자동 표시됩니다.
+    <h2>📊 수능 모의고사 성적 추이</h2>
+    <div style="font-size:12px; color:var(--c-text-mute); margin-bottom:10px;">낮을수록 좋음 (1등급 최고)</div>
+    <table class="grade-table" style="margin-bottom:12px;">
+      <thead><tr>
+        <th>시험</th><th>국어</th><th>영어</th><th>사탐1</th><th>사탐2</th><th>한국사</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="subj">2025년 10월<br><span style="font-size:11px; color:var(--c-text-mute);">(2학년)</span></td>
+          <td class="grade-4">4</td>
+          <td class="grade-2" style="color:#16a34a; font-weight:700;">2 ★</td>
+          <td class="grade-6">6<br><span style="font-size:10px; color:var(--c-text-mute);">사문</span></td>
+          <td class="grade-6">6<br><span style="font-size:10px; color:var(--c-text-mute);">생윤</span></td>
+          <td class="grade-6">6</td>
+        </tr>
+        <tr style="background:var(--c-surface-raised);">
+          <td class="subj">2026년 3월<br><span style="font-size:11px; color:var(--c-text-mute);">(3학년)</span></td>
+          <td class="grade-3" style="color:#16a34a; font-weight:700;">3 ↑</td>
+          <td class="grade-5">5</td>
+          <td colspan="2" style="text-align:center; color:var(--c-text-mute); font-size:12px;">미응시</td>
+          <td class="grade-6">6</td>
+        </tr>
+        <tr id="moui-add-row" style="display:none;">
+          <td colspan="6" style="text-align:center; color:var(--c-text-mute);">다음 모의고사 결과 추가 예정</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="background:#f0fdf4; border-radius:10px; padding:12px; font-size:12px; line-height:1.8; margin-bottom:10px;">
+      <strong style="color:#166534;">💡 분석</strong><br>
+      · 영어 <strong>2등급</strong>(10월) — 수능최저 영어 3등급 이하 조건 충족 가능<br>
+      · 국어 <strong>3등급</strong>(3월) — 정시 경쟁력 상당. 꾸준히 유지 시 상위권 도전 가능<br>
+      · 3월 영어 5등급은 시험 초반 적응 문제. 10월 2등급이 실력에 더 가까움<br>
+      · 사탐은 준비 없으면 6등급 예상 — 수능최저 사탐 없는 전형 우선 선택할 것
+    </div>
+
+    <div style="background:#fef3c7; border-radius:10px; padding:12px; font-size:12px; line-height:1.8;">
+      <strong style="color:#92400e;">🎯 수능 목표 등급 (2026.11.19)</strong><br>
+      · 국어 <strong>3등급 유지</strong> → 정시 4년제 도전권<br>
+      · 영어 <strong>3등급 이내 안정화</strong> → 수능최저 조건 충족<br>
+      · 사탐 (사문/생윤) <strong>5등급 목표</strong> → 인문계 최저 충족<br>
+      · 한국사 <strong>4등급 이내</strong> (절대평가, 4등급이면 C 충족)
+    </div>
+
+    <div style="margin-top:12px;">
+      <div style="font-weight:600; font-size:13px; margin-bottom:6px;">📅 앞으로 모의고사 일정</div>
+      <div style="font-size:12px; line-height:1.9; color:var(--c-text-soft);">
+        · 2026.06.11 — 6월 모의평가 (수능 출제기관 주관, 가장 중요)<br>
+        · 2026.09.03 — 9월 모의평가 (수능 난이도 직접 예측)<br>
+        · 2026.10월 — 교육청 모의고사<br>
+        · 2026.11.19 — 수능
+      </div>
     </div>
   </div>
 
