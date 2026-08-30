@@ -38,8 +38,8 @@
     <div class="chart-wrap">
       <canvas id="chart-trend"></canvas>
     </div>
-    <div style="font-size:12px; color:var(--c-text-mute); margin-top:8px;">
-      ⚠️ 추세가 평탄형. 3학년 1학기 기말에서 평균 상승 시 학종 어필 가능.
+    <div style="font-size:12px; color:var(--c-danger); margin-top:8px;">
+      ⚠️ 3학년 1학기 평균이 2학년보다 하락함 (확률과통계 8등급, 윤리와사상 9등급). 실기 비중이 낮은 전형(서경대 학생부60%)에는 불리하게 작용할 수 있어 2학기 만회가 중요.
     </div>
   </div>
 
@@ -49,7 +49,7 @@
       <canvas id="chart-subj"></canvas>
     </div>
     <div style="font-size:12px; color:var(--c-text-mute); margin-top:8px;">
-      ⚠️ 영어 2-1학기 7등급, 일본어 2-1학기 8등급 — 수능최저 영어 4 충족 불투명.
+      ⚠️ 영어 2-1학기 7등급, 일본어 2-1학기 8등급, 수학(확률과통계) 3-1학기 8등급 — 수능최저 영어 4 충족 불투명.
     </div>
   </div>
 
@@ -147,15 +147,15 @@ function avgFiltered(filterFn) {
 function renderSummary() {
   document.getElementById('avg-all').textContent = avgFiltered().toFixed(2);
   document.getElementById('avg-major').textContent = avgFiltered(g =>
-    /국어|수학|영어|문학|독서/.test(g.subject)
+    /국어|수학|영어|문학|독서|화법과작문|확률과통계/.test(g.subject)
   ).toFixed(2);
   document.getElementById('avg-hum').textContent = avgFiltered(g =>
-    /국어|문학|독서|사회|역사|지리|윤리|한국사/.test(g.subject)
+    /국어|문학|독서|사회|역사|지리|윤리|한국사|화법과작문/.test(g.subject)
   ).toFixed(2);
 }
 
 function renderTrendChart() {
-  const sems = ['1-1','1-2','2-1','2-2'];
+  const sems = ['1-1','1-2','2-1','2-2','3-1'];
   const data = sems.map(s => {
     const arr = GRADES.filter(g => semKey(g) === s && g.grade);
     if (!arr.length) return null;
@@ -186,14 +186,14 @@ function renderTrendChart() {
 
 function renderSubjChart() {
   const subjects = ['국어','수학','영어'];
-  const sems = ['1-1','1-2','2-1','2-2'];
+  const sems = ['1-1','1-2','2-1','2-2','3-1'];
   const datasets = subjects.map((subj, i) => ({
     label: subj,
     data: sems.map(s => {
       const g = GRADES.find(x => semKey(x) === s && (
         x.subject === subj ||
-        (subj === '국어' && /문학|독서/.test(x.subject)) ||
-        (subj === '수학' && /수학/.test(x.subject)) ||
+        (subj === '국어' && /문학|독서|화법과작문/.test(x.subject)) ||
+        (subj === '수학' && /수학|확률과통계/.test(x.subject)) ||
         (subj === '영어' && /영어/.test(x.subject))
       ));
       return g ? Number(g.grade) : null;
