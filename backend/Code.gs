@@ -418,9 +418,16 @@ function _readAll(sheet) {
   const rng = sh.getDataRange().getValues();
   if (rng.length < 2) return [];
   const head = rng[0];
+  const tz = ss.getSpreadsheetTimeZone();
   return rng.slice(1).filter(r => r[0] !== '').map(r => {
     const obj = {};
-    head.forEach((h, i) => { obj[h] = r[i]; });
+    head.forEach((h, i) => {
+      const v = r[i];
+      // 날짜처럼 보이는 문자열("2026-10-25" 등)을 시트에 쓰면 구글시트가 자동으로
+      // Date 타입 셀로 바꿔버려서, 그대로 JSON 직렬화하면 "2026-10-24T15:00:00.000Z"
+      // 같은 UTC 타임스탬프로 하루 밀려 나간다. 여기서 항상 YYYY-MM-DD 문자열로 되돌린다.
+      obj[h] = (v instanceof Date) ? Utilities.formatDate(v, tz, 'yyyy-MM-dd') : v;
+    });
     return obj;
   });
 }
