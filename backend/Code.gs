@@ -55,7 +55,9 @@ const HEADERS = {
   // ratioText: 검색으로 포착된 모집:지원 경쟁률 텍스트(완전 실시간 보장 안 됨, 확인 안 되면 빈 값)
   // liveLink: 그 학교의 실제 실시간 경쟁률 페이지 — 정확한 숫자는 이 링크로 직접 확인 권장
   // checkedAt: 마지막 자동 확인 시각(YYYY-MM-DD HH:mm, 스프레드시트 타임존 기준)
-  competition: ['id', 'university', 'region', 'department', 'relevance', 'admissionType', 'period', 'status', 'ratioText', 'ratioSource', 'liveLink', 'checkedAt', 'note']
+  // address: 캠퍼스 소재지(도로명주소 등) — ↓ 기존 시트에 이미 있던 컬럼 뒤에 추가된 필드라
+  // admissionLink: 그 대학 입학처 홈페이지 링크          반드시 맨 끝에 덧붙인다(initSheets가 기존 헤더 뒤에 이어 붙이므로)
+  competition: ['id', 'university', 'region', 'department', 'relevance', 'admissionType', 'period', 'status', 'ratioText', 'ratioSource', 'liveLink', 'checkedAt', 'note', 'address', 'admissionLink']
 };
 
 /* ============================================================
@@ -132,6 +134,10 @@ function initSheets() {
     if (sh.getLastRow() === 0) {
       sh.getRange(1, 1, 1, HEADERS[key].length).setValues([HEADERS[key]]);
       sh.setFrozenRows(1);
+    } else {
+      // 이미 있는 시트인데 HEADERS에 나중에 컬럼이 추가된 경우, 기존 헤더 뒤에
+      // 모자란 컬럼만 이어 붙인다 (기존 데이터 위치는 건드리지 않음)
+      _reconcileHeaders(sh, HEADERS[key]);
     }
   });
   // 기본 시트(Sheet1)가 비어있으면 삭제
@@ -140,6 +146,15 @@ function initSheets() {
     ss.deleteSheet(def);
   }
   seedInitialData();
+}
+
+function _reconcileHeaders(sh, wantedHeaders) {
+  const lastCol = sh.getLastColumn();
+  const existing = lastCol > 0 ? sh.getRange(1, 1, 1, lastCol).getValues()[0] : [];
+  const missing = wantedHeaders.filter(h => existing.indexOf(h) === -1);
+  if (missing.length) {
+    sh.getRange(1, existing.length + 1, 1, missing.length).setValues([missing]);
+  }
 }
 
 function seedInitialData() {
