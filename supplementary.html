@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>추가모집 · 수빈 대입</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="app">
+
+  <div class="card" style="background:linear-gradient(135deg,#ede9fe,#fce7f3); border:none;">
+    <h2 style="color:#6d28d9;">📢 전국 대학 추가모집 알리미</h2>
+    <div style="font-size:13px; line-height:1.8; color:#4c1d95;">
+      학과·지역 상관없이 전국 대학의 <strong>추가모집</strong> 공고를 매일 자동으로 검색해서 모아둡니다.
+      새 공고가 뜨면 등록된 폰으로 <strong>푸시 알림</strong>이 가고, 이 페이지에서 지역·전형절차까지 자세히 확인할 수 있습니다.
+    </div>
+    <div style="margin-top:8px; font-size:12px; color:var(--c-danger); background:rgba(255,255,255,0.5); border-radius:8px; padding:8px;">
+      ⚠️ 추가모집은 보통 수시·정시 결과가 다 나온 뒤인 <strong>1월 말~2월 초</strong>에 집중적으로 공고됩니다. 그 전까지는 "오늘 새 공고 없음"이 정상입니다 — 매일 검색은 계속 돌고 있어요.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title-row">
+      <h2>🔎 필터</h2>
+      <span id="last-checked" style="font-size:11px; color:var(--c-text-mute);"></span>
+    </div>
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <select id="f-region" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="">전체 지역</option>
+      </select>
+      <select id="f-sort" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="new">최신 발견순</option>
+        <option value="region">지역순</option>
+        <option value="deadline">접수마감 임박순</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="supp-list"></div>
+
+</main>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+let SUPP = [];
+
+(async function() {
+  App.renderHeader('추가모집 알리미', '전국 대학 추가모집 공고 · 학과 무관');
+  App.renderTabbar('supp');
+  SUPP = await App.load('supplementary');
+
+  const regions = [...new Set((SUPP || []).map(s => s.region).filter(Boolean))].sort();
+  document.getElementById('f-region').insertAdjacentHTML('beforeend',
+    regions.map(r => `<option value="${r}">${r}</option>`).join(''));
+
+  document.getElementById('f-region').onchange = render;
+  document.getElementById('f-sort').onchange = render;
+
+  render();
+})();
+
+function isNew(foundDate) {
+  if (!foundDate) return false;
+  const d = App.daysTo(foundDate);
+  return d <= 0 && d >= -1; // 오늘·어제 발견된 공고까지 NEW로 표시
+}
+
+function render() {
+  const region = document.getElementById('f-region').value;
+  const sort = document.getElementById('f-sort').value;
+
+  let list = (SUPP || []).slice();
+  if (region) list = list.filter(s => s.region === region);
+
+  if (sort === 'new') {
+    list.sort((a, b) => new Date(b.foundDate || 0) - new Date(a.foundDate || 0));
+  } else if (sort === 'region') {
+    list.sort((a, b) => (a.region || '').localeCompare(b.region || '') || (a.university || '').localeCompare(b.university || ''));
+  } else if (sort === 'deadline') {
+    list.sort((a, b) => new Date(a.period || '9999-12-31') - new Date(b.period || '9999-12-31'));
+  }
+
+  const lastChecked = (SUPP || [])
+    .map(s => s.foundDate)
+    .filter(Boolean)
+    .sort()
+    .slice(-1)[0];
+  document.getElementById('last-checked').textContent = lastChecked ? `최근 확인: ${lastChecked}` : '';
+
+  const el = document.getElementById('supp-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="card"><div class="empty" style="padding:24px 8px;">
+      아직 등록된 추가모집 공고가 없습니다.<br>
+      <span style="font-size:12px; color:var(--c-text-mute);">매일 자동 검색 중이며, 새 공고가 뜨면 여기에 쌓이고 푸시 알림이 갑니다.</span>
+    </div></div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(s => {
+    const newBadge = isNew(s.foundDate)
+      ? `<span class="tag tag-urgent" style="margin-left:6px;">NEW</span>` : '';
+    return `
+    <div class="card" style="border-left:4px solid var(--c-primary);">
+      <div class="card-title-row" style="align-items:flex-start;">
+        <div>
+          <div style="font-size:16px; font-weight:700;">${s.university || '-'} ${newBadge}</div>
+          <div style="font-size:12px; color:var(--c-text-mute); margin-top:2px;">
+            ${s.region ? `<span class="tag tag-cat">${s.region}</span>` : ''}
+            ${s.department ? `<span class="tag tag-cat">${s.department}</span>` : ''}
+            ${s.admissionType ? `<span class="tag tag-normal">${s.admissionType}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px; line-height:1.9; color:var(--c-text-soft); margin-top:8px;">
+        ${s.procedure ? `<div><b>전형절차</b>: ${s.procedure}</div>` : ''}
+        ${s.period ? `<div><b>원서접수</b>: ${s.period}</div>` : ''}
+        ${s.examDate ? `<div><b>전형일정</b>: ${s.examDate}</div>` : ''}
+        ${s.note ? `<div style="color:var(--c-text-mute); margin-top:4px;">${s.note}</div>` : ''}
+        <div style="margin-top:6px; font-size:11px; color:var(--c-text-mute);">
+          발견일 ${s.foundDate || '-'}
+          ${s.source && /^https?:\/\//i.test(s.source) ? ` · <a href="${s.source}" target="_blank" rel="noopener" style="color:var(--c-primary); font-weight:600;">출처 보기 ↗</a>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
