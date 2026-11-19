@@ -19,6 +19,13 @@
  *      여러 번 실행해도 안전합니다)
  *  3) 배포 방식이 "새 버전"이 아니라 기존 /exec URL을 그대로 쓰는 경우, 코드 저장만으로도
  *     doGet/doPost는 즉시 반영됩니다. 앱을 새로고침하면 대학·일정·할일·면접 탭에 반영됩니다.
+ *
+ * [전국 대학 추가모집 알리미 추가 시] 'supplementary' 시트가 새로 생겼습니다 (학과 무관,
+ * 전국 추가모집 공고를 매일 자동 검색해 쌓는 용도):
+ *  1) 이 파일 전체를 기존 Apps Script 코드에 덮어쓰기 저장 후 "새 버전"으로 재배포
+ *     (doGet이 새 sheet 이름을 인식하려면 재배포가 필요합니다)
+ *  2) 함수 선택 드롭다운에서 initSheets 선택 후 ▶ 실행 — 기존 시트는 건드리지 않고
+ *     'supplementary' 시트만 새로 만듭니다 (여러 번 실행해도 안전)
  */
 
 const SHEET_NAMES = {
@@ -27,7 +34,8 @@ const SHEET_NAMES = {
   schedule: 'schedule',
   universities: 'universities',
   interview: 'interview',
-  notes: 'notes'
+  notes: 'notes',
+  supplementary: 'supplementary'
 };
 
 const HEADERS = {
@@ -36,7 +44,11 @@ const HEADERS = {
   schedule: ['id', 'date', 'title', 'category', 'note'],
   universities: ['id', 'tier', 'name', 'major', 'admissionType', 'minimum', 'interview', 'memo', 'status', 'utype'],
   interview: ['id', 'q', 'a', 'tag'],
-  notes: ['id', 'date', 'content']
+  notes: ['id', 'date', 'content'],
+  // 전국 대학 추가모집 알리미 — 학과 무관, 매일 웹검색 결과를 쌓는 시트
+  // foundDate: 이 공고를 처음 확인한 날짜(YYYY-MM-DD) — 홈/알림의 "NEW" 판단 기준
+  // procedure: 지원 절차를 단계별로 풀어쓴 설명(서류/면접/실기 등 무엇을 거쳐야 하는지)
+  supplementary: ['id', 'foundDate', 'region', 'university', 'department', 'admissionType', 'procedure', 'period', 'examDate', 'source', 'note']
 };
 
 /* ============================================================

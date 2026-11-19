@@ -3,7 +3,7 @@
  * 시트 연동 + LocalStorage 폴백 (오프라인 OK)
  * =========================================================== */
 
-const SHEETS = ['todos','grades','schedule','universities','interview','notes'];
+const SHEETS = ['todos','grades','schedule','universities','interview','notes','supplementary'];
 const LS_KEY = (s) => `subin_${s}`;
 
 const App = {
@@ -134,7 +134,8 @@ const App = {
       { id: 'grade',  label: '성적',   ic: '📊', href: 'grades.html' },
       { id: 'cal',    label: '일정',   ic: '📅', href: 'calendar.html' },
       { id: 'univ',   label: '대학',   ic: '🎓', href: 'universities.html' },
-      { id: 'qa',     label: '면접',   ic: '💬', href: 'interview.html' }
+      { id: 'qa',     label: '면접',   ic: '💬', href: 'interview.html' },
+      { id: 'supp',   label: '추가모집', ic: '📢', href: 'supplementary.html' }
     ];
     const html = `<nav class="tabbar">${tabs.map(t =>
       `<a href="${t.href}" class="${t.id === active ? 'active' : ''}"><span class="ic">${t.ic}</span><span>${t.label}</span></a>`
