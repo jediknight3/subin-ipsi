@@ -135,7 +135,7 @@ const App = {
       { id: 'cal',    label: '일정',   ic: '📅', href: 'calendar.html' },
       { id: 'univ',   label: '대학',   ic: '🎓', href: 'universities.html' },
       { id: 'qa',     label: '면접',   ic: '💬', href: 'interview.html' },
-      { id: 'supp',   label: '추가모집', ic: '📢', href: 'supplementary.html' }
+      { id: 'supp',   label: '알리미', ic: '📢', href: 'supplementary.html' }
     ];
     const html = `<nav class="tabbar">${tabs.map(t =>
       `<a href="${t.href}" class="${t.id === active ? 'active' : ''}"><span class="ic">${t.ic}</span><span>${t.label}</span></a>`

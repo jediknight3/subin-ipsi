@@ -16,7 +16,7 @@
 
   <div class="card" id="supp-alert" hidden style="background:#fef2f2; border:1px solid #fecaca;">
     <div class="card-title-row">
-      <h2 style="color:#991b1b;">📢 새 추가모집 공고</h2>
+      <h2 style="color:#991b1b;">📢 새 알림</h2>
       <a href="supplementary.html" class="btn btn-soft btn-sm">확인하기</a>
     </div>
     <div id="supp-alert-body" style="font-size:13px; color:#7f1d1d;"></div>
@@ -122,11 +122,27 @@
     const d = App.daysTo(s.foundDate);
     return d <= 0 && d >= -1;
   });
+
+  // 전문대 접수중 알림 (연출 관련 학과가 지금 접수기간이면 표시)
+  const comp = await App.load('competition');
+  const openComp = (comp || []).filter(c => c.status === '접수중');
+
+  const alertParts = [];
   if (newSupp.length) {
-    document.getElementById('supp-alert').hidden = false;
-    document.getElementById('supp-alert-body').textContent =
+    alertParts.push(
       newSupp.slice(0, 3).map(s => `${s.university}(${s.region || '-'})`).join(', ') +
-      (newSupp.length > 3 ? ` 외 ${newSupp.length - 3}건` : '') + ' 새 추가모집 공고가 올라왔어요.';
+      (newSupp.length > 3 ? ` 외 ${newSupp.length - 3}건` : '') + ' 새 추가모집 공고'
+    );
+  }
+  if (openComp.length) {
+    alertParts.push(
+      openComp.slice(0, 3).map(c => `${c.university} ${c.department || ''}`).join(', ') +
+      (openComp.length > 3 ? ` 외 ${openComp.length - 3}건` : '') + ' 지금 접수중'
+    );
+  }
+  if (alertParts.length) {
+    document.getElementById('supp-alert').hidden = false;
+    document.getElementById('supp-alert-body').textContent = alertParts.join(' · ');
   }
 
   // D-day
