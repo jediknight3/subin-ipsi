@@ -226,13 +226,15 @@ function renderComp() {
         </div>
       </div>
       <div style="font-size:12px; line-height:1.9; color:var(--c-text-soft); margin-top:8px;">
+        ${c.address ? `<div><b>위치</b>: ${c.address}</div>` : ''}
         ${c.admissionType ? `<div><b>전형</b>: ${c.admissionType}</div>` : ''}
         ${c.period ? `<div><b>원서접수</b>: ${c.period}</div>` : ''}
         <div><b>경쟁률(참고)</b>: ${c.ratioText || '아직 확인 안 됨'}</div>
         ${c.note ? `<div style="color:var(--c-text-mute); margin-top:4px;">${c.note}</div>` : ''}
-        <div style="margin-top:6px; font-size:11px; color:var(--c-text-mute);">
-          확인시각 ${c.checkedAt || '-'}
-          ${c.liveLink && /^https?:\/\//i.test(c.liveLink) ? ` · <a href="${c.liveLink}" target="_blank" rel="noopener" style="color:var(--c-primary); font-weight:600;">실시간 경쟁률 보기 ↗</a>` : ''}
+        <div style="margin-top:6px; font-size:11px; color:var(--c-text-mute); display:flex; gap:10px; flex-wrap:wrap;">
+          <span>확인시각 ${c.checkedAt || '-'}</span>
+          ${c.admissionLink && /^https?:\/\//i.test(c.admissionLink) ? `<a href="${c.admissionLink}" target="_blank" rel="noopener" style="color:var(--c-text-soft); font-weight:600;">입학처 홈페이지 ↗</a>` : ''}
+          ${c.liveLink && /^https?:\/\//i.test(c.liveLink) ? `<a href="${c.liveLink}" target="_blank" rel="noopener" style="color:var(--c-primary); font-weight:600;">실시간 경쟁률 보기 ↗</a>` : ''}
         </div>
       </div>
     </div>`;
