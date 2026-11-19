@@ -76,6 +76,7 @@
           <option value="접수중">접수중만</option>
           <option value="접수전">접수전만</option>
         </select>
+        <button id="comp-refresh" class="btn btn-soft btn-sm" style="margin-left:auto;">🔄 새로고침</button>
       </div>
     </div>
 
@@ -108,10 +109,24 @@ let COMP = [];
   document.getElementById('f-sort').onchange = renderSupp;
   document.getElementById('c-relevance').onchange = renderComp;
   document.getElementById('c-status').onchange = renderComp;
+  document.getElementById('comp-refresh').onclick = refreshComp;
 
   renderSupp();
   renderComp();
 })();
+
+async function refreshComp() {
+  const btn = document.getElementById('comp-refresh');
+  btn.disabled = true;
+  btn.textContent = '🔄 확인 중...';
+  try {
+    COMP = await App.load('competition');
+    renderComp();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔄 새로고침';
+  }
+}
 
 function switchTab(which) {
   const isSupp = which === 'supp';
@@ -213,6 +228,24 @@ function renderComp() {
     const relBadge = c.relevance === '연출'
       ? `<span class="tag tag-normal" style="margin-left:6px;">연출</span>`
       : (c.relevance ? `<span class="tag tag-cat" style="margin-left:6px;">추천</span>` : '');
+
+    let ddayBadge = '';
+    if (c.deadline && c.status !== '마감') {
+      const d = App.daysTo(c.deadline);
+      if (d >= 0) {
+        const cls = d <= 2 ? 'tag-urgent' : d <= 7 ? 'tag-soon' : 'tag-normal';
+        ddayBadge = `<span class="tag ${cls}">마감 ${d === 0 ? 'D-DAY' : 'D-' + d}</span>`;
+      } else {
+        ddayBadge = `<span class="tag tag-cat">마감 지남</span>`;
+      }
+    }
+
+    const links = [
+      c.admissionLink && /^https?:\/\//i.test(c.admissionLink) ? `<a href="${c.admissionLink}" target="_blank" rel="noopener" style="color:var(--c-text-soft); font-weight:600;">입학처 홈페이지 ↗</a>` : '',
+      c.applyLink && /^https?:\/\//i.test(c.applyLink) ? `<a href="${c.applyLink}" target="_blank" rel="noopener" style="color:var(--c-text-soft); font-weight:600;">원서접수 바로가기 ↗</a>` : '',
+      c.liveLink && /^https?:\/\//i.test(c.liveLink) ? `<a href="${c.liveLink}" target="_blank" rel="noopener" style="color:var(--c-primary); font-weight:600;">실시간 경쟁률 보기 ↗</a>` : ''
+    ].filter(Boolean).join('');
+
     return `
     <div class="card" style="border-left:4px solid ${c.relevance === '연출' ? 'var(--c-primary)' : 'var(--c-text-mute)'};">
       <div class="card-title-row" style="align-items:flex-start;">
@@ -222,6 +255,7 @@ function renderComp() {
             ${c.region ? `<span class="tag tag-cat">${c.region}</span>` : ''}
             ${c.department ? `<span class="tag tag-cat">${c.department}</span>` : ''}
             ${c.status ? `<span class="tag ${statusCls[c.status] || 'tag-cat'}">${c.status}</span>` : ''}
+            ${ddayBadge}
           </div>
         </div>
       </div>
@@ -233,8 +267,7 @@ function renderComp() {
         ${c.note ? `<div style="color:var(--c-text-mute); margin-top:4px;">${c.note}</div>` : ''}
         <div style="margin-top:6px; font-size:11px; color:var(--c-text-mute); display:flex; gap:10px; flex-wrap:wrap;">
           <span>확인시각 ${c.checkedAt || '-'}</span>
-          ${c.admissionLink && /^https?:\/\//i.test(c.admissionLink) ? `<a href="${c.admissionLink}" target="_blank" rel="noopener" style="color:var(--c-text-soft); font-weight:600;">입학처 홈페이지 ↗</a>` : ''}
-          ${c.liveLink && /^https?:\/\//i.test(c.liveLink) ? `<a href="${c.liveLink}" target="_blank" rel="noopener" style="color:var(--c-primary); font-weight:600;">실시간 경쟁률 보기 ↗</a>` : ''}
+          ${links}
         </div>
       </div>
     </div>`;

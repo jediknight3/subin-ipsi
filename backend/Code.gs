@@ -55,9 +55,11 @@ const HEADERS = {
   // ratioText: 검색으로 포착된 모집:지원 경쟁률 텍스트(완전 실시간 보장 안 됨, 확인 안 되면 빈 값)
   // liveLink: 그 학교의 실제 실시간 경쟁률 페이지 — 정확한 숫자는 이 링크로 직접 확인 권장
   // checkedAt: 마지막 자동 확인 시각(YYYY-MM-DD HH:mm, 스프레드시트 타임존 기준)
-  // address: 캠퍼스 소재지(도로명주소 등) — ↓ 기존 시트에 이미 있던 컬럼 뒤에 추가된 필드라
+  // address: 캠퍼스 소재지(도로명주소 등) — ↓ 기존 시트에 이미 있던 컬럼 뒤에 추가된 필드들이라
   // admissionLink: 그 대학 입학처 홈페이지 링크          반드시 맨 끝에 덧붙인다(initSheets가 기존 헤더 뒤에 이어 붙이므로)
-  competition: ['id', 'university', 'region', 'department', 'relevance', 'admissionType', 'period', 'status', 'ratioText', 'ratioSource', 'liveLink', 'checkedAt', 'note', 'address', 'admissionLink']
+  // deadline: 접수마감일(YYYY-MM-DD, 홈/목록의 D-day 계산용) — period는 "9.7~9.11" 같은 설명 텍스트라 D-day 계산엔 이 필드 사용
+  // applyLink: 그 학교 원서접수 시스템(유웨이어플라이/진학어플라이/자체시스템) 바로가기 링크
+  competition: ['id', 'university', 'region', 'department', 'relevance', 'admissionType', 'period', 'status', 'ratioText', 'ratioSource', 'liveLink', 'checkedAt', 'note', 'address', 'admissionLink', 'deadline', 'applyLink']
 };
 
 /* ============================================================
