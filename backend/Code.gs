@@ -26,6 +26,14 @@
  *     (doGet이 새 sheet 이름을 인식하려면 재배포가 필요합니다)
  *  2) 함수 선택 드롭다운에서 initSheets 선택 후 ▶ 실행 — 기존 시트는 건드리지 않고
  *     'supplementary' 시트만 새로 만듭니다 (여러 번 실행해도 안전)
+ *
+ * [전문대 경쟁률에 접수마감 D-day·원서접수 링크 추가 시] competition 시트에 deadline·
+ * applyLink 컬럼이 새로 생겼습니다:
+ *  1) 이 파일 전체를 덮어쓰기 저장 후 "새 버전"으로 재배포
+ *  2) initSheets 선택 후 ▶ 실행 — 기존 competition 데이터는 그대로 두고 deadline·
+ *     applyLink 컬럼만 뒤에 추가됩니다
+ *  3) seedCompetitionLinks 선택 후 ▶ 실행 — 직접 확인한 9개교 입학처·원서접수 링크를
+ *     채워넣습니다 (다른 칸은 건드리지 않음, 여러 번 실행해도 안전)
  */
 
 const SHEET_NAMES = {
@@ -55,9 +63,11 @@ const HEADERS = {
   // ratioText: 검색으로 포착된 모집:지원 경쟁률 텍스트(완전 실시간 보장 안 됨, 확인 안 되면 빈 값)
   // liveLink: 그 학교의 실제 실시간 경쟁률 페이지 — 정확한 숫자는 이 링크로 직접 확인 권장
   // checkedAt: 마지막 자동 확인 시각(YYYY-MM-DD HH:mm, 스프레드시트 타임존 기준)
-  // address: 캠퍼스 소재지(도로명주소 등) — ↓ 기존 시트에 이미 있던 컬럼 뒤에 추가된 필드라
+  // address: 캠퍼스 소재지(도로명주소 등) — ↓ 기존 시트에 이미 있던 컬럼 뒤에 추가된 필드들이라
   // admissionLink: 그 대학 입학처 홈페이지 링크          반드시 맨 끝에 덧붙인다(initSheets가 기존 헤더 뒤에 이어 붙이므로)
-  competition: ['id', 'university', 'region', 'department', 'relevance', 'admissionType', 'period', 'status', 'ratioText', 'ratioSource', 'liveLink', 'checkedAt', 'note', 'address', 'admissionLink']
+  // deadline: 접수마감일(YYYY-MM-DD, 홈/목록의 D-day 계산용) — period는 "9.7~9.11" 같은 설명 텍스트라 D-day 계산엔 이 필드 사용
+  // applyLink: 그 학교 원서접수 시스템(유웨이어플라이/진학어플라이/자체시스템) 바로가기 링크
+  competition: ['id', 'university', 'region', 'department', 'relevance', 'admissionType', 'period', 'status', 'ratioText', 'ratioSource', 'liveLink', 'checkedAt', 'note', 'address', 'admissionLink', 'deadline', 'applyLink']
 };
 
 /* ============================================================
@@ -350,6 +360,57 @@ function rebuild2027ForAttachedUnivs() {
   qaRows.forEach(r => _upsert('interview', _rowObj('interview', r)));
 
   Logger.log('2027 재편 완료: universities 13개(단국대x3·서경대·동국대x2·중부대·상명대x2·청주대·호원대·서울예대)로 교체, schedule 교체, todos 정리, interview 정리');
+}
+
+/* ============================================================
+ * 전문대 9개교 입학처·원서접수 링크 보강 (2026.11 직접 확인)
+ *  - 각 학교 공식 홈페이지를 직접 열어서 확인한 입학처/원서접수 URL만 반영
+ *    (서일대·백석예술대는 실제 "수시2차 원서접수" 메뉴 링크까지 확인, 나머지는
+ *     공식 홈페이지 nav에 걸린 입학처 서브도메인까지만 확인 — 추측 아님)
+ *  - 확인 안 된 값(ratioText, applyLink 일부 등)은 그대로 비워둠 — 매시간 Routine이 채움
+ *  - 다른 필드(ratioText·note 등)는 건드리지 않고 해당 칸만 patch (덮어쓰기 아님)
+ *  - 실행 방법: Apps Script 편집기 함수 선택 드롭다운에서
+ *    "seedCompetitionLinks" 선택 후 ▶ 실행 (여러 번 실행해도 안전)
+ * ============================================================ */
+function seedCompetitionLinks() {
+  const confirmed = {
+    'seoil-univ-theater': {
+      admissionLink: 'https://www.seoil.ac.kr/sites/ipsi/index.do',
+      applyLink: 'https://www.seoil.ac.kr/ipsi/3899/subview.do',
+      deadline: '2026-11-25'
+    },
+    'baekseok-arts-performing': {
+      admissionLink: 'https://www.bau.ac.kr/admission/index.do',
+      applyLink: 'https://www.bau.ac.kr/admission/773/subview.do',
+      deadline: '2026-11-25'
+    },
+    'dima-broadcast-directing': { admissionLink: 'https://ipsi.dima.ac.kr', deadline: '2026-11-25' },
+    'kaywon-performing': { admissionLink: 'https://ipsi.kaywon.ac.kr', deadline: '2026-11-25' },
+    'chungkang-performing': { admissionLink: 'https://ipsi.ck.ac.kr', deadline: '2026-11-25' },
+    'induk-broadcast': { admissionLink: 'https://ipsi.induk.ac.kr', deadline: '2026-11-25' },
+    // ↓ 홈페이지가 JS로 메뉴를 그려서 입학처 서브도메인을 못 찾음 — 학교 대표 홈페이지만 확인
+    'mjc-theater-film': { admissionLink: 'https://www.mjc.ac.kr', deadline: '2026-11-25' },
+    'dsu-acting': { admissionLink: 'https://www.dsc.ac.kr', deadline: '2026-11-25' },
+    // 서울예대는 정규 수시가 이미 마감 상태라 deadline 없이 홈페이지만
+    'seoularts-directing': { admissionLink: 'https://www.seoularts.ac.kr' }
+  };
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName(SHEET_NAMES.competition);
+  const data = sh.getDataRange().getValues();
+  const head = data[0];
+  const idCol = head.indexOf('id');
+  let patched = 0;
+  for (let i = 1; i < data.length; i++) {
+    const patch = confirmed[data[i][idCol]];
+    if (!patch) continue;
+    Object.keys(patch).forEach(k => {
+      const col = head.indexOf(k);
+      if (col >= 0) sh.getRange(i + 1, col + 1).setValue(patch[k]);
+    });
+    patched++;
+  }
+  Logger.log('competition 링크 보강 완료: ' + patched + '개 행 patch');
 }
 
 /* ============================================================
