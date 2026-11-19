@@ -35,7 +35,8 @@ const SHEET_NAMES = {
   universities: 'universities',
   interview: 'interview',
   notes: 'notes',
-  supplementary: 'supplementary'
+  supplementary: 'supplementary',
+  competition: 'competition'
 };
 
 const HEADERS = {
@@ -48,7 +49,13 @@ const HEADERS = {
   // 전국 대학 추가모집 알리미 — 학과 무관, 매일 웹검색 결과를 쌓는 시트
   // foundDate: 이 공고를 처음 확인한 날짜(YYYY-MM-DD) — 홈/알림의 "NEW" 판단 기준
   // procedure: 지원 절차를 단계별로 풀어쓴 설명(서류/면접/실기 등 무엇을 거쳐야 하는지)
-  supplementary: ['id', 'foundDate', 'region', 'university', 'department', 'admissionType', 'procedure', 'period', 'examDate', 'source', 'note']
+  supplementary: ['id', 'foundDate', 'region', 'university', 'department', 'admissionType', 'procedure', 'period', 'examDate', 'source', 'note'],
+  // 전문대 접수기간·경쟁률 트래커 — 연출 관련 학과 위주 + 프로필에 맞는 추천 학과, 매시간 갱신
+  // relevance: '연출' | '추천'(다른 지원 추천 학과) — status: '접수전'|'접수중'|'마감'
+  // ratioText: 검색으로 포착된 모집:지원 경쟁률 텍스트(완전 실시간 보장 안 됨, 확인 안 되면 빈 값)
+  // liveLink: 그 학교의 실제 실시간 경쟁률 페이지 — 정확한 숫자는 이 링크로 직접 확인 권장
+  // checkedAt: 마지막 자동 확인 시각(YYYY-MM-DD HH:mm, 스프레드시트 타임존 기준)
+  competition: ['id', 'university', 'region', 'department', 'relevance', 'admissionType', 'period', 'status', 'ratioText', 'ratioSource', 'liveLink', 'checkedAt', 'note']
 };
 
 /* ============================================================
@@ -437,8 +444,14 @@ function _readAll(sheet) {
       const v = r[i];
       // 날짜처럼 보이는 문자열("2026-10-25" 등)을 시트에 쓰면 구글시트가 자동으로
       // Date 타입 셀로 바꿔버려서, 그대로 JSON 직렬화하면 "2026-10-24T15:00:00.000Z"
-      // 같은 UTC 타임스탬프로 하루 밀려 나간다. 여기서 항상 YYYY-MM-DD 문자열로 되돌린다.
-      obj[h] = (v instanceof Date) ? Utilities.formatDate(v, tz, 'yyyy-MM-dd') : v;
+      // 같은 UTC 타임스탬프로 하루 밀려 나간다. 여기서 항상 스프레드시트 타임존 기준
+      // 문자열로 되돌리되, 시:분이 00:00:00이 아니면(예: checkedAt처럼 시각까지
+      // 의미있는 값) 시:분까지 포함해 되돌린다.
+      obj[h] = (v instanceof Date)
+        ? (Utilities.formatDate(v, tz, 'HH:mm:ss') === '00:00:00'
+            ? Utilities.formatDate(v, tz, 'yyyy-MM-dd')
+            : Utilities.formatDate(v, tz, 'yyyy-MM-dd HH:mm'))
+        : v;
     });
     return obj;
   });
