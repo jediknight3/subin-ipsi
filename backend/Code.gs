@@ -539,17 +539,17 @@ function pivotToJeongsiOnly() {
   const now = new Date().toISOString();
 
   // 1) 수시 8개교(및 변형) 전부 삭제 — 더 이상 진행 중인 지원 없음
-  ['u1','u2','u3','u4','u6','u7','u8','u10','u11','u12','u13','u14'].forEach(id => _delete('universities', id));
+  _deleteMany('universities', ['u1','u2','u3','u4','u6','u7','u8','u10','u11','u12','u13','u14']);
 
   // 2) 수시 면접 Q&A 전부 삭제 — 정시 교과/수능전형엔 면접이 없음
-  ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q15',
-   'q16','q17','q18','q19','q20','q21','q22','q23','q24','q25'].forEach(id => _delete('interview', id));
+  _deleteMany('interview', ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q15',
+   'q16','q17','q18','q19','q20','q21','q22','q23','q24','q25']);
 
   // 3) 수시 전용 할일(실기준비·수시 면접·수시 발표 확인 등) 전부 삭제
   //    (t50·t52·t53·t54, 즉 정시 관련 할일은 그대로 둔다)
-  ['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','t14','t15','t16','t17',
+  _deleteMany('todos', ['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','t14','t15','t16','t17',
    't18','t19','t20','t21','t22','t23','t24','t25','t26','t27','t29','t32','t33','t34','t35',
-   't37','t38','t39','t40','t41','t42','t43','t44','t45','t46','t47','t48','t51'].forEach(id => _delete('todos', id));
+   't37','t38','t39','t40','t41','t42','t43','t44','t45','t46','t47','t48','t51']);
 
   // 4) 정시 집중 기간에 필요한 새 할일 추가
   const todoRows = [
@@ -561,8 +561,8 @@ function pivotToJeongsiOnly() {
   todoRows.forEach(r => _upsert('todos', _rowObj('todos', r)));
 
   // 5) 수시 중심 옛 일정 전부 삭제 (실기고사·수시 원서접수·수시 발표 등)
-  ['s1','s2','s3','s4','s5','s6','s7','s8','s10','s11','s12','s13','s14','s15','s17','s18',
-   's19','s20','s21','s22','s23','s28','s29','s30','s31','s32','s33','s34','s35','s36','s37'].forEach(id => _delete('schedule', id));
+  _deleteMany('schedule', ['s1','s2','s3','s4','s5','s6','s7','s8','s10','s11','s12','s13','s14','s15','s17','s18',
+   's19','s20','s21','s22','s23','s28','s29','s30','s31','s32','s33','s34','s35','s36','s37']);
 
   // 6) 정시 중심 새 일정으로 재정비 (기존 s50~s53 정시 일정은 유지하며 다시 채움)
   const scheduleRows = [
@@ -725,6 +725,24 @@ function _delete(sheet, id) {
   const data = sh.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
     if (data[i][0] === id) { sh.deleteRow(i + 1); return; }
+  }
+}
+
+// 여러 id를 한 번에 지울 때 쓴다 — 시트를 한 번만 읽고 한 번만 다시 써서,
+// id마다 매번 전체를 다시 읽는 _delete를 반복 호출하는 것보다 훨씬 빠르다
+// (id 수가 많을 때, 예: pivotToJeongsiOnly처럼 수십~백 건을 한꺼번에 지울 때 사용)
+function _deleteMany(sheet, ids) {
+  const idSet = new Set(ids);
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName(SHEET_NAMES[sheet]);
+  const head = HEADERS[sheet];
+  const data = sh.getDataRange().getValues();
+  const keep = data.slice(1).filter(r => r[0] !== '' && !idSet.has(r[0]));
+  if (sh.getLastRow() > 1) {
+    sh.getRange(2, 1, sh.getLastRow() - 1, head.length).clearContent();
+  }
+  if (keep.length) {
+    sh.getRange(2, 1, keep.length, head.length).setValues(keep);
   }
 }
 
