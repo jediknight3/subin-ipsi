@@ -10,6 +10,12 @@
 <body>
 <main class="app">
 
+  <div class="tab-toggle">
+    <button id="tab-susi" class="active">🎬 수시 (8개교)</button>
+    <button id="tab-jeongsi">📝 정시·전문대 백업</button>
+  </div>
+
+  <div id="view-susi">
   <div class="card" style="background:linear-gradient(135deg,#ede9fe,#fce7f3); border:none;">
     <h2 style="color:#6d28d9;">🎬 연출 지망 대학 목록 (2026.09 · 최종 8개교)</h2>
     <div style="font-size:13px; line-height:1.8; color:#4c1d95;">
@@ -288,6 +294,62 @@
       <div style="padding:6px 0; color:var(--c-success);">✨ 앞으로 대학이 추가되면 이 카드도 함께 갱신하겠습니다</div>
     </div>
   </div>
+  </div>
+
+  <!-- ===== 정시·전문대 백업 섹션 ===== -->
+  <div id="view-jeongsi" hidden>
+    <div class="card" style="background:linear-gradient(135deg,#e0e7ff,#fce7f3); border:none;">
+      <h2 style="color:#3730a3;">📝 정시 백업 전략 (2026.11 학기별 내신 재계산 기준)</h2>
+      <div style="font-size:13px; line-height:1.8; color:#3730a3;">
+        수시 8개교가 모두 아쉬울 경우를 대비한 정시·전문대 백업 카드입니다. 학교마다 내신 산출 방식이 달라(우석대 상위10과목·신구대 우수2개학기 등) 같은 학생이어도 환산 등급이 다르게 나옵니다.
+      </div>
+      <div style="margin-top:8px; font-size:12px; color:var(--c-danger); background:rgba(255,255,255,0.6); border-radius:8px; padding:8px;">
+        ⚠️ 외부 AI 도구로 업로드한 요강 PDF·생기부 화면을 보고 계산한 추정치입니다. <strong>생기부 과목별 이수단위를 반영하기 전 수치</strong>라 소수점 아래는 달라질 수 있고, 과거 연도 입결로 교차 검증한 수준입니다 — 최종 지원 전 각 학교 입학처로 재확인하세요.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📐 학기별 내신 재계산 결과</h2>
+      <div style="font-size:12px; line-height:1.9; color:var(--c-text-soft);">
+        <div style="padding:6px 0; border-bottom:1px solid var(--c-border);"><b>전 과목 평균</b>: 6.42등급 (기존 누적 평균 6.4와 일치)</div>
+        <div style="padding:6px 0; border-bottom:1px solid var(--c-border);"><b>학기별 평균</b>: 1-1학기 6.50 · 1-2학기 6.00 · 2-1학기 6.43 · 2-2학기 6.14 · 3-1학기 7.20</div>
+        <div style="padding:6px 0; border-bottom:1px solid var(--c-border);"><b>신구대·서일대 방식</b>(우수 2개 학기: 1-2·2-2 평균): <strong style="color:var(--c-primary);">6.07등급</strong></div>
+        <div style="padding:6px 0; border-bottom:1px solid var(--c-border);"><b>우석대 방식</b>(국·영·수·사·과·한국사 중 상위 10과목): <strong style="color:var(--c-primary);">5.60등급</strong> — 전 과목 평균보다 0.8등급 유리</div>
+        <div style="padding:6px 0; border-bottom:1px solid var(--c-border);"><b>우송대 방식</b>(12과목, 과목별 최우수 학기): 약 5.75등급</div>
+        <div style="padding:6px 0; color:var(--c-text-mute);"><b>전주대 추가모집 교과</b>(인문, 국·영·수·사 전 학년): 약 6.33등급</div>
+      </div>
+    </div>
+
+    <div class="card" style="background:#fef2f2; border:1px solid #fecaca;">
+      <h2 style="color:#991b1b;">📊 여러 해 입결 교차 검증</h2>
+      <div style="font-size:12px; line-height:1.9; color:#7f1d1d;">
+        <div style="padding:6px 0;"><b>우석대</b>: 2025 수시 면접중심(경찰행정) 70%컷 5.81·평균 6.4등급, 2026 수시 교과 평균 등급컷 약 5.1등급, 2026 정시 교과 70%컷 6.27~6.74등급 — 수빈의 5.60은 <strong>안정권</strong>으로 판단.</div>
+        <div style="padding:6px 0;"><b>신구대</b>(전문대): 2025 정시 수능전형 평균 — 유아교육 195점·식품영양 198점·호텔베이커리 197점. 수빈 추정 196~211점은 <strong>평균 근처</strong>(국어 표준점수 확정 후 재확인).</div>
+        <div style="padding:6px 0;"><b>전문대 전반</b>: 2026학년도 수도권 28개 전문대 경쟁률 12.5:1 — 전년 6.6:1 대비 2배 가까이 상승. 안정 카드를 넉넉히 넣어야 함.</div>
+      </div>
+    </div>
+
+    <div id="jeongsi-list"></div>
+
+    <div class="card">
+      <h2>🎯 학과 선택 기준</h2>
+      <div style="font-size:12px; line-height:1.9; color:var(--c-text-soft);">
+        <div style="padding:6px 0;">면허·자격증(영양사·동물보건사·경찰·사회복지사 등)으로 이어지는 학과를 우선 추천 — 취업·산업수요가 뚜렷한 보건계열 강세가 이어지는 추세.</div>
+        <div style="padding:6px 0;">전문대에 가더라도 졸업 후 학사학위 전공심화과정으로 일·학습 병행하며 학사학위를 받을 수 있어, 4년제가 아니어도 길이 막히지 않음.</div>
+        <div style="padding:6px 0; color:var(--c-danger);">유아교육은 학령인구 감소를 고려해 신중하게 검토 권장.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>✅ 남은 확인 사항 (할 일에 등록됨)</h2>
+      <div style="font-size:12px; line-height:1.9; color:var(--c-text-soft);">
+        <div style="padding:6px 0; border-bottom:1px solid var(--c-border);">① 12/11 성적표 — 국어 표준점수로 신구대·청운대 재계산</div>
+        <div style="padding:6px 0; border-bottom:1px solid var(--c-border);">② 12/18 수시 발표 — 8곳 중 합격 있으면 정시 지원 불가</div>
+        <div style="padding:6px 0; border-bottom:1px solid var(--c-border);">③ 생활기록부 과목별 이수단위 확인 — 정확한 내신 계산에 필요</div>
+        <div style="padding:6px 0;">④ 원서 마감(1/4) 직전 실시간 경쟁률 확인 — 3:1 미만 학과로 변경</div>
+      </div>
+    </div>
+  </div>
 
 </main>
 
@@ -300,14 +362,28 @@ let UNIVS = [];
   App.renderHeader('지원 대학', '연출 지망 대학 목록 (계속 추가 예정)');
   App.renderTabbar('univ');
   UNIVS = await App.load('universities');
+
+  document.getElementById('tab-susi').onclick = () => switchUnivTab('susi');
+  document.getElementById('tab-jeongsi').onclick = () => switchUnivTab('jeongsi');
+
   render();
+  renderJeongsi();
 })();
+
+function switchUnivTab(which) {
+  const isSusi = which === 'susi';
+  document.getElementById('tab-susi').classList.toggle('active', isSusi);
+  document.getElementById('tab-jeongsi').classList.toggle('active', !isSusi);
+  document.getElementById('view-susi').hidden = !isSusi;
+  document.getElementById('view-jeongsi').hidden = isSusi;
+}
 
 function render() {
   const tiers = ['soshin','jeokjeong','anjun'];
   const tierLabel = { soshin:'소신', jeokjeong:'적정', anjun:'안전' };
 
   const html = (UNIVS || [])
+    .filter(u => u.season !== '정시')
     .sort((a,b) => tiers.indexOf(a.tier) - tiers.indexOf(b.tier))
     .map(u => `
       <div class="univ-card tier-${u.tier}">
@@ -342,12 +418,56 @@ async function changeStatus(id) {
   u.status = next;
   UNIVS = await App.upsert('universities', u);
   render();
+  renderJeongsi();
 }
 
 async function delU(id) {
   if (!confirm('이 대학을 삭제할까요?')) return;
   UNIVS = await App.remove('universities', id);
   render();
+  renderJeongsi();
+}
+
+function renderJeongsi() {
+  const el = document.getElementById('jeongsi-list');
+  if (!el) return;
+  const guns = ['가군','나군','다군','라군','전문대'];
+  const tierLabel = { soshin:'도전', jeokjeong:'적정', anjun:'안정' };
+  const list = (UNIVS || []).filter(u => u.season === '정시');
+
+  if (!list.length) {
+    el.innerHTML = '<div class="card"><div class="empty">정시 백업 후보가 아직 없습니다.</div></div>';
+    return;
+  }
+
+  el.innerHTML = guns.map(gun => {
+    const items = list.filter(u => u.gun === gun);
+    if (!items.length) return '';
+    return `
+    <div class="card">
+      <h2>${gun === '전문대' ? '🎓 전문대' : `📌 ${gun}`}</h2>
+      ${items.map(u => `
+        <div class="univ-card tier-${u.tier}">
+          <div class="univ-head">
+            <div>
+              <div class="univ-name">${u.name} <span style="font-size:11px; font-weight:500; padding:2px 6px; border-radius:10px; background:${u.utype==='전문대'?'#dbeafe':'#ede9fe'}; color:${u.utype==='전문대'?'#1d4ed8':'#6d28d9'};">${u.utype}</span></div>
+              <div class="univ-major">${u.major}</div>
+            </div>
+            <div class="univ-tier">${tierLabel[u.tier] || u.tier}</div>
+          </div>
+          <div class="univ-info">
+            <div><div class="lbl">전형</div><div class="val">${u.admissionType || '-'}</div></div>
+            <div><div class="lbl">상태</div><div class="val">${u.status || '검토중'}</div></div>
+          </div>
+          ${u.memo ? `<div class="univ-note">${u.memo}</div>` : ''}
+          <div style="display:flex; gap:6px; margin-top:10px; justify-content:flex-end;">
+            <button class="btn btn-ghost btn-sm" onclick="changeStatus('${u.id}')">상태변경</button>
+            <button class="btn btn-ghost btn-sm" onclick="delU('${u.id}')">삭제</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  }).join('');
 }
 
 async function addUniv() {
