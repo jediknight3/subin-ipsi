@@ -190,6 +190,23 @@ function _reconcileHeaders(sh, wantedHeaders) {
   }
 }
 
+/* ============================================================
+ * universities 헤더 행 강제 복구 (2026.11.24)
+ *  - 동시에 겹쳐 실행된 함수가 행을 지우다 헤더 줄(1행)까지 밀려서
+ *    season/utype 등 헤더 글자가 한 칸씩 어긋난 상태가 됨.
+ *  - 실제 데이터 칸(A~L열)은 항상 HEADERS.universities 순서로
+ *    써지므로 데이터는 그대로이고, 1행 글자만 다시 맞추면 된다.
+ *  - 실행 방법: Apps Script 편집기 함수 선택 드롭다운에서
+ *    "fixUniversitiesHeaders" 선택 후 ▶ 실행 (여러 번 실행해도 안전)
+ * ============================================================ */
+function fixUniversitiesHeaders() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName(SHEET_NAMES.universities);
+  const head = HEADERS.universities;
+  sh.getRange(1, 1, 1, head.length).setValues([head]);
+  Logger.log('universities 헤더 복구 완료: ' + head.join(', '));
+}
+
 function seedInitialData() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
