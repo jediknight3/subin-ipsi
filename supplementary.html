@@ -10,173 +10,50 @@
 <body>
 <main class="app">
 
-  <div class="tab-toggle">
-    <button id="tab-supp" class="active">📢 추가모집</button>
-    <button id="tab-comp">🎓 전문대 경쟁률</button>
+  <div class="card" style="background:linear-gradient(135deg,#ede9fe,#fce7f3); border:none;">
+    <h2 style="color:#6d28d9;">📢 전국 대학 추가모집 알리미</h2>
+    <div style="font-size:13px; line-height:1.8; color:#4c1d95;">
+      학과·지역 상관없이 전국 대학의 <strong>추가모집</strong> 공고를 매일 자동으로 검색해서 모아둡니다.
+      새 공고가 뜨면 등록된 폰으로 <strong>푸시 알림</strong>이 가고, 이 페이지에서 지역·전형절차까지 자세히 확인할 수 있습니다.
+    </div>
+    <div style="margin-top:8px; font-size:12px; color:var(--c-danger); background:rgba(255,255,255,0.5); border-radius:8px; padding:8px;">
+      ⚠️ 추가모집은 보통 정시 결과가 다 나온 뒤인 <strong>2월 중순~말</strong>에 집중적으로 공고됩니다. 그 전까지는 "오늘 새 공고 없음"이 정상입니다 — 매일 검색은 계속 돌고 있어요.
+    </div>
   </div>
 
-  <!-- ===== 추가모집 섹션 ===== -->
-  <div id="view-supp">
-    <div class="card" style="background:linear-gradient(135deg,#ede9fe,#fce7f3); border:none;">
-      <h2 style="color:#6d28d9;">📢 전국 대학 추가모집 알리미</h2>
-      <div style="font-size:13px; line-height:1.8; color:#4c1d95;">
-        학과·지역 상관없이 전국 대학의 <strong>추가모집</strong> 공고를 매일 자동으로 검색해서 모아둡니다.
-        새 공고가 뜨면 등록된 폰으로 <strong>푸시 알림</strong>이 가고, 이 페이지에서 지역·전형절차까지 자세히 확인할 수 있습니다.
+  <div class="card" style="background:#f8fafc;">
+    <div class="card-title-row">
+      <h2>📊 작년(2026학년도) 추가모집 참고 통계</h2>
+    </div>
+    <div style="font-size:13px; line-height:1.8; color:var(--c-text-soft);">
+      <div style="padding:8px 0; border-bottom:1px solid var(--c-border);">
+        <strong style="color:var(--c-text);">전국 155개 4년제 대학, 8,511명 선발</strong> (2026.2.13 기준, 대교협 발표) — 전년도(167개 대학·9,131명)보다 실시 대학 수·모집 인원 모두 줄었습니다.
       </div>
-      <div style="margin-top:8px; font-size:12px; color:var(--c-danger); background:rgba(255,255,255,0.5); border-radius:8px; padding:8px;">
-        ⚠️ 추가모집은 보통 수시·정시 결과가 다 나온 뒤인 <strong>1월 말~2월 초</strong>에 집중적으로 공고됩니다. 그 전까지는 "오늘 새 공고 없음"이 정상입니다 — 매일 검색은 계속 돌고 있어요.
+      <div style="padding:8px 0; color:var(--c-text-mute); font-size:12px;">
+        ⚠️ 추가모집 관련 보도는 거의 의대·치대·한의대 쪽만 다뤄서, 학과별 미달 데이터는 검색으로 재구성이 안 됩니다. 정확한 과거 미달 학과를 보려면 각 대학 입학처 공지나 대학알리미(학과별 충원율)를 직접 확인해야 합니다.
+        전국 추가모집은 이 페이지가 올해(2027학년도) 기준으로 매일 실시간 검색해서 알려드리고 있어요 — 과거보단 지금이 더 확실합니다.
       </div>
     </div>
-
-    <div class="card" style="background:#f8fafc;">
-      <div class="card-title-row">
-        <h2>📊 작년(2026학년도) 추가모집 참고 통계</h2>
-      </div>
-      <div style="font-size:13px; line-height:1.8; color:var(--c-text-soft);">
-        <div style="padding:8px 0; border-bottom:1px solid var(--c-border);">
-          <strong style="color:var(--c-text);">전국 155개 4년제 대학, 8,511명 선발</strong> (2026.2.13 기준, 대교협 발표) — 전년도(167개 대학·9,131명)보다 실시 대학 수·모집 인원 모두 줄었습니다.
-        </div>
-        <div style="padding:8px 0; border-bottom:1px solid var(--c-border);">
-          <strong style="color:var(--c-text);">서울·인천권 추가모집 실시 확인된 학교</strong>: 가천대·건국대·국민대·동국대·서울시립대·숭실대·인하대·한국외대·홍익대 등 — <span style="color:var(--c-text-mute);">단, "추가모집을 실시했다"는 사실만 확인되고, 어느 학과에서 몇 명이 미달났는지는 공개 보도가 없어 미확인입니다.</span>
-        </div>
-        <div style="padding:8px 0; color:var(--c-text-mute); font-size:12px;">
-          ⚠️ 추가모집 관련 보도는 거의 의대·치대·한의대 쪽만 다뤄서(미달이 아니라 경쟁률 226:1 같은 "쏠림" 기사), 연극영화·공연·방송 같은 예체능 계열의 학과별 미달 데이터는 검색으로 재구성이 안 됩니다. 정확한 과거 미달 학과를 보려면 각 대학 입학처 공지나 대학알리미(학과별 충원율)를 직접 확인해야 합니다.
-          전국 추가모집은 이 페이지가 올해(2027학년도) 기준으로 매일 실시간 검색해서 알려드리고 있어요 — 과거보단 지금이 더 확실합니다.
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="background:#f8fafc;">
-      <div class="card-title-row">
-        <h2>🔍 추가 후보 전형구조 조사 (실제 미달 확인된 곳 없음)</h2>
-      </div>
-      <div style="font-size:12px; color:var(--c-danger); margin-bottom:10px; line-height:1.6; background:rgba(255,255,255,0.6); border-radius:8px; padding:8px;">
-        ⚠️ 아래 학교들이 실제로 미달·추가모집이 있었는지 재검색했습니다. <strong>8개교 중 실제 미달이 확인된 곳은 하나도 없습니다.</strong> 오히려 경쟁률이 확인된 3곳(세종대·중앙대·인천대)은 실기 전형임에도 경쟁률이 매우 높아 미달과는 정반대였습니다. "학생부 비중이 낮은 전형"이라고 해서 "쉬운 학교"라는 뜻은 아니라는 걸 이번에 다시 확인했습니다 — 참고 자료로만 보시고, 지원 전 반드시 해당 대학 입학처에서 직접 확인하세요.
-      </div>
-
-      <div style="border-left:3px solid var(--c-danger); padding-left:10px; margin-bottom:10px;">
-        <div style="font-size:14px; font-weight:700;">세종대학교 · 영화예술학과(연기예술전공) <span class="tag tag-urgent" style="margin-left:4px;">미달 아님 확정</span></div>
-        <div style="font-size:12px; color:var(--c-text-soft); line-height:1.7; margin-top:4px;">
-          서울 · 실기우수자전형<br>
-          <span style="color:var(--c-text-mute);">최근 5년 경쟁률 100~195:1로 극심한 초고경쟁 (2017년 162:1, 2018년 195.7:1, 2019년 167.5:1, 2021년 136.1:1). 미달과는 전혀 무관 — 비추천.</span>
-        </div>
-      </div>
-
-      <div style="border-left:3px solid var(--c-danger); padding-left:10px; margin-bottom:10px;">
-        <div style="font-size:14px; font-weight:700;">중앙대학교 · 공연영상창작학부 영화전공 <span class="tag tag-urgent" style="margin-left:4px;">미달 아님 확정</span></div>
-        <div style="font-size:12px; color:var(--c-text-soft); line-height:1.7; margin-top:4px;">
-          서울(안성 포함) · 실기형(실기/실적전형)<br>
-          <span style="color:var(--c-text-mute);">2025학년도 실기형 131:1 기록. 2026학년도부터 수능최저학력기준까지 신설됨. 미달과는 정반대 — 비추천.</span>
-        </div>
-      </div>
-
-      <div style="border-left:3px solid var(--c-danger); padding-left:10px; margin-bottom:10px;">
-        <div style="font-size:14px; font-weight:700;">인천대학교 · 공연예술학과 <span class="tag tag-urgent" style="margin-left:4px;">미달 아님 확정</span></div>
-        <div style="font-size:12px; color:var(--c-text-soft); line-height:1.7; margin-top:4px;">
-          인천 · 실기우수자전형<br>
-          <span style="color:var(--c-text-mute);">2026학년도 지원자 1,288명으로 학과 개설 이후 최고 경쟁률 기록. 미달과는 정반대 — 비추천.</span>
-        </div>
-      </div>
-
-      <div style="border-left:3px solid var(--c-text-mute); padding-left:10px; margin-bottom:10px;">
-        <div style="font-size:14px; font-weight:700;">가천대학교 · 연기예술학과 <span class="tag tag-cat" style="margin-left:4px;">미확인</span></div>
-        <div style="font-size:12px; color:var(--c-text-soft); line-height:1.7; margin-top:4px;">
-          경기 성남 · 정시 가군 6명 모집, 수능60%+실기40%<br>
-          <span style="color:var(--c-text-mute);">학과 단위 경쟁률·미달 여부는 공개 자료로 확인 안 됨.</span>
-        </div>
-      </div>
-
-      <div style="border-left:3px solid var(--c-text-mute); padding-left:10px; margin-bottom:10px;">
-        <div style="font-size:14px; font-weight:700;">경희대학교 · 연극영화학과 <span class="tag tag-cat" style="margin-left:4px;">미확인</span></div>
-        <div style="font-size:12px; color:var(--c-text-soft); line-height:1.7; margin-top:4px;">
-          서울 · 실기우수자전형<br>
-          <span style="color:var(--c-text-mute);">학과 단위 경쟁률·미달 여부 공개 자료 없음. 대학알리미도 학과별이 아닌 학교 전체 단위로만 공시.</span>
-        </div>
-      </div>
-
-      <div style="border-left:3px solid var(--c-text-mute); padding-left:10px; margin-bottom:10px;">
-        <div style="font-size:14px; font-weight:700;">협성대학교 · 연극영화학과 <span class="tag tag-cat" style="margin-left:4px;">미확인</span></div>
-        <div style="font-size:12px; color:var(--c-text-soft); line-height:1.7; margin-top:4px;">
-          경기 화성 · 실기우수자전형(예술대학)<br>
-          <span style="color:var(--c-text-mute);">학과 단위 경쟁률·미달 여부 확인 안 됨.</span>
-        </div>
-      </div>
-
-      <div style="border-left:3px solid var(--c-text-mute); padding-left:10px; margin-bottom:10px;">
-        <div style="font-size:14px; font-weight:700;">우석대학교 · 방송연예학과 <span class="tag tag-cat" style="margin-left:4px;">미확인</span></div>
-        <div style="font-size:12px; color:var(--c-text-soft); line-height:1.7; margin-top:4px;">
-          전북 전주 · 실기(실적)전형<br>
-          <span style="color:var(--c-text-mute);">2026학년도 전주캠퍼스 전체 수시 경쟁률 5.21:1(학과 평균 아님). 학과 단위 수치는 확인 안 됨.</span>
-        </div>
-      </div>
-
-      <div style="border-left:3px solid var(--c-text-mute); padding-left:10px;">
-        <div style="font-size:14px; font-weight:700;">성결대학교 · 영화영상학과 <span class="tag tag-cat" style="margin-left:4px;">미확인</span></div>
-        <div style="font-size:12px; color:var(--c-text-soft); line-height:1.7; margin-top:4px;">
-          경기 안양 · 수시 실기전형<br>
-          <span style="color:var(--c-text-mute);">2027학년도 전체 수시 경쟁률 13.74:1(2년 연속 상승, 학과 평균 아님). 학과 단위 수치는 확인 안 됨.</span>
-        </div>
-      </div>
-
-      <div style="margin-top:10px; font-size:11px; color:var(--c-text-mute);">
-        정리: "전형구조가 유리해 보인다"는 "경쟁률이 낮다"는 뜻이 아닙니다. 실기 중심 전형은 오히려 전국에서 지망생이 몰려 더 치열한 경우가 많습니다(세종대·중앙대·인천대가 그 예). 실제 미달·추가모집은 예측이 거의 불가능하므로, 위쪽 "전국 대학 추가모집 알리미"(올해 실시간 검색)가 더 신뢰할 수 있는 정보입니다.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title-row">
-        <h2>🔎 필터</h2>
-        <span id="supp-last-checked" style="font-size:11px; color:var(--c-text-mute);"></span>
-      </div>
-      <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <select id="f-region" class="btn-ghost btn btn-sm" style="background:#fff;">
-          <option value="">전체 지역</option>
-        </select>
-        <select id="f-sort" class="btn-ghost btn btn-sm" style="background:#fff;">
-          <option value="new">최신 발견순</option>
-          <option value="region">지역순</option>
-          <option value="deadline">접수마감 임박순</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="supp-list"></div>
   </div>
 
-  <!-- ===== 전문대 경쟁률 섹션 ===== -->
-  <div id="view-comp" hidden>
-    <div class="card" style="background:linear-gradient(135deg,#e0e7ff,#fce7f3); border:none;">
-      <h2 style="color:#3730a3;">🎓 전문대 접수기간·경쟁률 트래커</h2>
-      <div style="font-size:13px; line-height:1.8; color:#3730a3;">
-        <strong>연출/공연/방송 관련 학과</strong> 위주로 전문대 수시 접수기간을 추적하고, 프로필에 맞는 다른 지원 가능 학과도 함께 찾아줍니다. 매시간 자동으로 갱신됩니다.
-      </div>
-      <div style="margin-top:8px; font-size:12px; color:var(--c-danger); background:rgba(255,255,255,0.6); border-radius:8px; padding:8px;">
-        ⚠️ <strong>실시간 경쟁률 플랫폼(진학어플라이·유웨이 등)은 이 시스템이 직접 접속할 수 없어</strong>, 아래 "경쟁률" 칸은 검색으로 포착된 참고값입니다 (완전 실시간 보장 안 됨). <strong>정확한 실시간 숫자</strong>는 각 카드의 "실시간 경쟁률 보기" 링크를 눌러 폰에서 직접 확인하세요.
-      </div>
+  <div class="card">
+    <div class="card-title-row">
+      <h2>🔎 필터</h2>
+      <span id="supp-last-checked" style="font-size:11px; color:var(--c-text-mute);"></span>
     </div>
-
-    <div class="card">
-      <div class="card-title-row">
-        <h2>🔎 필터</h2>
-        <span id="comp-last-checked" style="font-size:11px; color:var(--c-text-mute);"></span>
-      </div>
-      <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <select id="c-relevance" class="btn-ghost btn btn-sm" style="background:#fff;">
-          <option value="">전체</option>
-          <option value="연출">연출 관련</option>
-          <option value="추천">추천 학과</option>
-        </select>
-        <select id="c-status" class="btn-ghost btn btn-sm" style="background:#fff;">
-          <option value="">전체 상태</option>
-          <option value="접수중">접수중만</option>
-          <option value="접수전">접수전만</option>
-        </select>
-        <button id="comp-refresh" class="btn btn-soft btn-sm" style="margin-left:auto;">🔄 새로고침</button>
-      </div>
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <select id="f-region" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="">전체 지역</option>
+      </select>
+      <select id="f-sort" class="btn-ghost btn btn-sm" style="background:#fff;">
+        <option value="new">최신 발견순</option>
+        <option value="region">지역순</option>
+        <option value="deadline">접수마감 임박순</option>
+      </select>
     </div>
-
-    <div id="comp-list"></div>
   </div>
+
+  <div id="supp-list"></div>
 
 </main>
 
@@ -184,17 +61,12 @@
 <script src="js/app.js"></script>
 <script>
 let SUPP = [];
-let COMP = [];
 
 (async function() {
-  App.renderHeader('알리미', '추가모집 공고 · 전문대 경쟁률');
+  App.renderHeader('알리미', '전국 추가모집 공고');
   App.renderTabbar('supp');
 
-  document.getElementById('tab-supp').onclick = () => switchTab('supp');
-  document.getElementById('tab-comp').onclick = () => switchTab('comp');
-
   SUPP = await App.load('supplementary');
-  COMP = await App.load('competition');
 
   const regions = [...new Set((SUPP || []).map(s => s.region).filter(Boolean))].sort();
   document.getElementById('f-region').insertAdjacentHTML('beforeend',
@@ -202,34 +74,9 @@ let COMP = [];
 
   document.getElementById('f-region').onchange = renderSupp;
   document.getElementById('f-sort').onchange = renderSupp;
-  document.getElementById('c-relevance').onchange = renderComp;
-  document.getElementById('c-status').onchange = renderComp;
-  document.getElementById('comp-refresh').onclick = refreshComp;
 
   renderSupp();
-  renderComp();
 })();
-
-async function refreshComp() {
-  const btn = document.getElementById('comp-refresh');
-  btn.disabled = true;
-  btn.textContent = '🔄 확인 중...';
-  try {
-    COMP = await App.load('competition');
-    renderComp();
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '🔄 새로고침';
-  }
-}
-
-function switchTab(which) {
-  const isSupp = which === 'supp';
-  document.getElementById('tab-supp').classList.toggle('active', isSupp);
-  document.getElementById('tab-comp').classList.toggle('active', !isSupp);
-  document.getElementById('view-supp').hidden = !isSupp;
-  document.getElementById('view-comp').hidden = isSupp;
-}
 
 function isNew(foundDate) {
   if (!foundDate) return false;
@@ -286,83 +133,6 @@ function renderSupp() {
         <div style="margin-top:6px; font-size:11px; color:var(--c-text-mute);">
           발견일 ${s.foundDate || '-'}
           ${s.source && /^https?:\/\//i.test(s.source) ? ` · <a href="${s.source}" target="_blank" rel="noopener" style="color:var(--c-primary); font-weight:600;">출처 보기 ↗</a>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderComp() {
-  const relevance = document.getElementById('c-relevance').value;
-  const status = document.getElementById('c-status').value;
-
-  let list = (COMP || []).slice();
-  if (relevance) list = list.filter(c => c.relevance === relevance);
-  if (status) list = list.filter(c => c.status === status);
-
-  // 연출 먼저, 접수중 먼저, 그다음 접수마감 임박순
-  const statusOrder = { '접수중': 0, '접수전': 1, '마감': 2 };
-  list.sort((a, b) =>
-    (a.relevance === '연출' ? 0 : 1) - (b.relevance === '연출' ? 0 : 1) ||
-    (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9));
-
-  const lastChecked = (COMP || []).map(c => c.checkedAt).filter(Boolean).sort().slice(-1)[0];
-  document.getElementById('comp-last-checked').textContent = lastChecked ? `최근 확인: ${lastChecked}` : '';
-
-  const el = document.getElementById('comp-list');
-  if (!list.length) {
-    el.innerHTML = `<div class="card"><div class="empty" style="padding:24px 8px;">
-      아직 등록된 전문대 정보가 없습니다.<br>
-      <span style="font-size:12px; color:var(--c-text-mute);">매시간 자동 검색 중이며, 접수기간·경쟁률 정보가 모이면 여기에 쌓입니다.</span>
-    </div></div>`;
-    return;
-  }
-
-  const statusCls = { '접수중': 'tag-urgent', '접수전': 'tag-soon', '마감': 'tag-cat' };
-  el.innerHTML = list.map(c => {
-    const relBadge = c.relevance === '연출'
-      ? `<span class="tag tag-normal" style="margin-left:6px;">연출</span>`
-      : (c.relevance ? `<span class="tag tag-cat" style="margin-left:6px;">추천</span>` : '');
-
-    let ddayBadge = '';
-    if (c.deadline && c.status !== '마감') {
-      const d = App.daysTo(c.deadline);
-      if (d >= 0) {
-        const cls = d <= 2 ? 'tag-urgent' : d <= 7 ? 'tag-soon' : 'tag-normal';
-        ddayBadge = `<span class="tag ${cls}">마감 ${d === 0 ? 'D-DAY' : 'D-' + d}</span>`;
-      } else {
-        ddayBadge = `<span class="tag tag-cat">마감 지남</span>`;
-      }
-    }
-
-    const links = [
-      c.admissionLink && /^https?:\/\//i.test(c.admissionLink) ? `<a href="${c.admissionLink}" target="_blank" rel="noopener" style="color:var(--c-text-soft); font-weight:600;">입학처 홈페이지 ↗</a>` : '',
-      c.applyLink && /^https?:\/\//i.test(c.applyLink) ? `<a href="${c.applyLink}" target="_blank" rel="noopener" style="color:var(--c-text-soft); font-weight:600;">원서접수 바로가기 ↗</a>` : '',
-      c.liveLink && /^https?:\/\//i.test(c.liveLink) ? `<a href="${c.liveLink}" target="_blank" rel="noopener" style="color:var(--c-primary); font-weight:600;">실시간 경쟁률 보기 ↗</a>` : ''
-    ].filter(Boolean).join('');
-
-    return `
-    <div class="card" style="border-left:4px solid ${c.relevance === '연출' ? 'var(--c-primary)' : 'var(--c-text-mute)'};">
-      <div class="card-title-row" style="align-items:flex-start;">
-        <div>
-          <div style="font-size:16px; font-weight:700;">${c.university || '-'} ${relBadge}</div>
-          <div style="font-size:12px; color:var(--c-text-mute); margin-top:2px;">
-            ${c.region ? `<span class="tag tag-cat">${c.region}</span>` : ''}
-            ${c.department ? `<span class="tag tag-cat">${c.department}</span>` : ''}
-            ${c.status ? `<span class="tag ${statusCls[c.status] || 'tag-cat'}">${c.status}</span>` : ''}
-            ${ddayBadge}
-          </div>
-        </div>
-      </div>
-      <div style="font-size:12px; line-height:1.9; color:var(--c-text-soft); margin-top:8px;">
-        ${c.address ? `<div><b>위치</b>: ${c.address}</div>` : ''}
-        ${c.admissionType ? `<div><b>전형</b>: ${c.admissionType}</div>` : ''}
-        ${c.period ? `<div><b>원서접수</b>: ${c.period}</div>` : ''}
-        <div><b>경쟁률(참고)</b>: ${c.ratioText || '아직 확인 안 됨'}</div>
-        ${c.note ? `<div style="color:var(--c-text-mute); margin-top:4px;">${c.note}</div>` : ''}
-        <div style="margin-top:6px; font-size:11px; color:var(--c-text-mute); display:flex; gap:10px; flex-wrap:wrap;">
-          <span>확인시각 ${c.checkedAt || '-'}</span>
-          ${links}
         </div>
       </div>
     </div>`;
